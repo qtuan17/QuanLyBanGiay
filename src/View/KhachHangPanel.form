@@ -74,8 +74,7 @@
         <Component class="javax.swing.JTable" name="tblKH">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="6" rowCount="4">
-                <Column editable="true" title="STT" type="java.lang.Object"/>
+              <Table columnCount="5" rowCount="4">
                 <Column editable="true" title="ID Kh&#xe1;ch H&#xe0;ng" type="java.lang.Object"/>
                 <Column editable="true" title="H&#x1ecd; T&#xea;n" type="java.lang.Object"/>
                 <Column editable="true" title="SDT " type="java.lang.Object"/>
@@ -85,11 +84,6 @@
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title/>
-                  <Editor/>
-                  <Renderer/>
-                </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>

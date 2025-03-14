@@ -6,7 +6,9 @@ package View;
 
 import Dao.KhachHangDao;
 import Model.KhachHang;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.util.List;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -19,6 +21,7 @@ public class KhachHangPanel extends javax.swing.JPanel {
     KhachHangDao khachHangDao;
     int index = -1;
     public KhachHangPanel(java.awt.Frame parent, boolean modal) throws Exception{
+        UIManager.setLookAndFeel(new FlatIntelliJLaf());
         initComponents();
         khachHangDao = new KhachHangDao();
         fillTableKhachHang();
@@ -69,13 +72,13 @@ public class KhachHangPanel extends javax.swing.JPanel {
 
         tblKH.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "STT", "ID Khách Hàng", "Họ Tên", "SDT ", "Địa Chỉ", "Trạng Thái"
+                "ID Khách Hàng", "Họ Tên", "SDT ", "Địa Chỉ", "Trạng Thái"
             }
         ));
         jScrollPane1.setViewportView(tblKH);

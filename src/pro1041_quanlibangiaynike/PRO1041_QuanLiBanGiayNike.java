@@ -16,13 +16,13 @@ import java.util.Date;
  */
 public class PRO1041_QuanLiBanGiayNike {
 
-   public static TrangChuJFrame frmTC = new TrangChuJFrame();
-   
-   public static void main(String[] args) throws Exception {
-        // TODO code application logic here
-        DangNhapJFrame frmDN = new DangNhapJFrame();
-        frmDN.setVisible(true); // Sử dụng setVisible thay vì show()
-    }
+//   public static TrangChuJFrame frmTC = new TrangChuJFrame();
+//   
+//   public static void main(String[] args) throws Exception {
+//        // TODO code application logic here
+//        DangNhapJFrame frmDN = new DangNhapJFrame();
+//        frmDN.setVisible(true); // Sử dụng setVisible thay vì show()
+//    }
 }
 
     
