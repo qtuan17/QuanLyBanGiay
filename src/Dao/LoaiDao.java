@@ -34,7 +34,6 @@ public class LoaiDao {
             while (resultSet.next()) {
                 Loai loai = new Loai(
                         resultSet.getInt("ID_Loai"),
-                        resultSet.getString("MaLoai"),
                         resultSet.getString("TenLoai"),
                         resultSet.getInt("TrangThai")
                 );
@@ -45,4 +44,56 @@ public class LoaiDao {
         }
         return loais;
 }
+    public int create(Loai loai){
+        int rowedit = 0;
+        String sql = "INSERT INTO Loai (TenLoai, TrangThai) VALUES \n"
+                + "(?, 1)";
+        try {
+            preparedStatement = connection.prepareCall(sql);
+            preparedStatement.setString(1, loai.getTenLoai());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+    }
+    public int update(Loai loai){
+        int rowedit = 0;
+        String sql = "UPDATE Loai set Tenloai = ? WHERE ID_Loai = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, loai.getTenLoai());
+            preparedStatement.setInt(2, loai.getID_Loai());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+    }
+    public int delete(Loai loai){
+        int rowedit = 0;
+        String sql = "UPDATE Loai set trangthai = ? WHERE ID_Loai = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 0);
+            preparedStatement.setInt(2, loai.getID_Loai());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+    }
+    public int khoiphuc(Loai loai){
+        int rowedit = 0;
+        String sql = "UPDATE Loai set trangthai = ? WHERE ID_Loai = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 1);
+            preparedStatement.setInt(2, loai.getID_Loai());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+    }
 }

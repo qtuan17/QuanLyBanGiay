@@ -40,12 +40,13 @@ public class LoginDao {
                         resultSet.getInt("ID_CV"),
                         resultSet.getString("HoTenNV"),
                         resultSet.getDate("NgaySinh"),
-                        resultSet.getInt("CCCD"),
                         resultSet.getString("DiaChi"),
                         resultSet.getString("Username"),
                         resultSet.getString("Password"),
                         resultSet.getInt("TrangThai")
+                        
                 );
+                // de o day
             }
 
         } catch (SQLException e) {

@@ -44,4 +44,24 @@ public class ChucVuDao {
         }
         return lstCV;
     }
+    
+    public int create(ChucVu chucVu) {
+    int rowedit = 0;
+    String sql = "INSERT INTO ChucVu (TenChucVu, MoTa, TrangThai) VALUES (?, ?, 1)";
+    try {
+        System.out.println("Tên chức vụ: " + chucVu.getTenChucVu());
+        System.out.println("Mô tả chức vụ: " + chucVu.getMoTa());  // In mô tả để kiểm tra
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, chucVu.getTenChucVu());
+        preparedStatement.setString(2, chucVu.getMoTa());
+        rowedit = preparedStatement.executeUpdate();
+        System.out.println("Rows affected: " + rowedit);  // In số dòng bị ảnh hưởng
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return rowedit;
+}
+
+
+
 }

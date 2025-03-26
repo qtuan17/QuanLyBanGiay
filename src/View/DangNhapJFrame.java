@@ -81,7 +81,6 @@ public class DangNhapJFrame extends javax.swing.JFrame {
         txtPassword = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         btnReset = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -109,7 +108,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
             }
         });
 
-        btnDangNhap.setBackground(new java.awt.Color(0, 51, 51));
+        btnDangNhap.setBackground(new java.awt.Color(0, 102, 153));
         btnDangNhap.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         btnDangNhap.setForeground(new java.awt.Color(255, 255, 255));
         btnDangNhap.setText("Đăng nhập");
@@ -132,11 +131,6 @@ public class DangNhapJFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Segoe UI Light", 1, 15)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(102, 102, 102));
-        jButton1.setText("Đăng kí");
-        jButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -150,8 +144,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
                     .addComponent(chkbNhoMatKhau)
                     .addComponent(txtPassword)
                     .addComponent(txtUserName)
-                    .addComponent(btnDangNhap, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnDangNhap, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
                 .addContainerGap(15, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -173,9 +166,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
                 .addComponent(chkbNhoMatKhau)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(48, 48, 48)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnReset)
@@ -185,7 +176,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logo shop bong da.png"))); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/sports.png"))); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 2, 19)); // NOI18N
         jLabel1.setText("SHOP GIÀY BÓNG ĐÁ CHÍNH HÃNG");
@@ -237,19 +228,34 @@ public class DangNhapJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_chkbNhoMatKhauActionPerformed
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
-        // TODO add your handling code here:
+
+        // Lấy thông tin người dùng
         String strUsername = txtUserName.getText().trim();
         String strPassword = String.valueOf(txtPassword.getPassword()).trim();
+
+// Kiểm tra trống
+        if (strUsername.isEmpty() || strPassword.isEmpty()) {
+            ThongBao("Tài khoản hoặc mật khẩu không được để trống", "Lỗi đăng nhập", 2);
+            return;
+        }
+
+// Kiểm tra độ dài tài khoản (ít nhất 5 ký tự)
+        if (strUsername.length() < 5) {
+            ThongBao("Tài khoản phải có ít nhất 5 ký tự", "Lỗi đăng nhập", 2);
+            return;
+        }
+
         String luumk = "", luutdn = "";
         if (chkbNhoMatKhau.isSelected()) {
             luutdn = strUsername;
             luumk = strPassword;
-            System.out.println("lưu mật khẩu");
+            System.out.println("Lưu mật khẩu");
         } else {
             luutdn = "";
             luumk = "";
-            System.out.println("không lưu mật khẩu");
+            System.out.println("Không lưu mật khẩu");
         }
+
         try {
             File file = new File("luumk.txt");
             if (!file.exists()) {
@@ -260,16 +266,16 @@ public class DangNhapJFrame extends javax.swing.JFrame {
             bw.write(luutdn + "\n" + luumk);
             bw.close();
             if (chkbNhoMatKhau.isSelected()) {
-                System.out.println("lưu phiên đăng nhập thành công");
+                System.out.println("Lưu phiên đăng nhập thành công");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         if (KiemTra(strUsername, strPassword)) {
-
+            // Thông báo đăng nhập thành công
+            ThongBao("Đăng nhập thành công!", "Thông báo", 1);
             try {
-                //            pro1041_quanlibangiaynike.PRO1041_QuanLiBanGiayNike.frmTC.show();
                 new TrangChuJFrame().setVisible(true);
             } catch (UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(DangNhapJFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -278,6 +284,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
         } else {
             ThongBao("Bạn nhập sai tài khoản hoặc mật khẩu", "Lỗi đăng nhập", 2);
         }
+
     }
 
     private boolean KiemTra(String tdn, String mk) {
@@ -351,7 +358,6 @@ public class DangNhapJFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnDangNhap;
     private javax.swing.JButton btnReset;
     private javax.swing.JCheckBox chkbNhoMatKhau;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

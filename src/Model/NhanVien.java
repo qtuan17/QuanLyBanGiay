@@ -16,7 +16,6 @@ public class NhanVien {
     private int ID_CV;
     private String HoTenNV;
     private Date Ngaysinh;
-    private int CCCD;
     private String DiaChi;
     private String Username;
     private String Password;
@@ -25,12 +24,11 @@ public class NhanVien {
     public NhanVien() {
     }
 
-    public NhanVien(int ID_NV, int ID_CV, String HoTenNV, Date Ngaysinh, int CCCD, String DiaChi, String Username, String Password, int TrangThai) {
+    public NhanVien(int ID_NV, int ID_CV, String HoTenNV, Date Ngaysinh, String DiaChi, String Username, String Password, int TrangThai) {
         this.ID_NV = ID_NV;
         this.ID_CV = ID_CV;
         this.HoTenNV = HoTenNV;
         this.Ngaysinh = Ngaysinh;
-        this.CCCD = CCCD;
         this.DiaChi = DiaChi;
         this.Username = Username;
         this.Password = Password;
@@ -69,14 +67,6 @@ public class NhanVien {
         this.Ngaysinh = Ngaysinh;
     }
 
-    public int getCCCD() {
-        return CCCD;
-    }
-
-    public void setCCCD(int CCCD) {
-        this.CCCD = CCCD;
-    }
-
     public String getDiaChi() {
         return DiaChi;
     }
@@ -108,6 +98,8 @@ public class NhanVien {
     public void setTrangThai(int TrangThai) {
         this.TrangThai = TrangThai;
     }
+    
+    
 
     public void setId(int parseInt) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

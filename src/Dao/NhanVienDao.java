@@ -37,7 +37,6 @@ public class NhanVienDao {
                         resultSet.getInt("ID_CV"),
                         resultSet.getString("HoTenNV"),
                         resultSet.getDate("NgaySinh"),
-                        resultSet.getInt("CCCD"),
                         resultSet.getString("DiaChi"),
                         resultSet.getString("Username"),
                         resultSet.getString("Password"),
@@ -68,11 +67,10 @@ public class NhanVienDao {
                     : null;
             preparedStatement.setDate(4, sqlDate);                         // NgaySinh
 
-            preparedStatement.setInt(5, nhanVien.getCCCD());                // CCCD
-            preparedStatement.setString(6, nhanVien.getDiaChi());           // DiaChi
-            preparedStatement.setString(7, nhanVien.getUsername());         // Username
-            preparedStatement.setString(8, nhanVien.getPassword());         // Password
-            preparedStatement.setInt(9, nhanVien.getTrangThai());           // TrangThai
+            preparedStatement.setString(5, nhanVien.getDiaChi());           // DiaChi
+            preparedStatement.setString(6, nhanVien.getUsername());         // Username
+            preparedStatement.setString(7, nhanVien.getPassword());         // Password
+            preparedStatement.setInt(8, nhanVien.getTrangThai());           // TrangThai
 
             add = preparedStatement.executeUpdate();
         } catch (SQLException e) {
