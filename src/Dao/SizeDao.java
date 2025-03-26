@@ -35,7 +35,6 @@ public class SizeDao {
             while (resultSet.next()) {
                 Size size = new Size(
                         resultSet.getInt("ID_Size"),
-                        resultSet.getString("MaSize"),
                         resultSet.getString("TenSize"),
                         resultSet.getInt("TrangThai")
                 );
@@ -45,5 +44,58 @@ public class SizeDao {
             e.printStackTrace();
         }
         return sizes;
+    }
+    public int create(Size size) {
+        int rowedit = 0;
+        String sql = "INSERT INTO Size (TenSize, TrangThai) VALUES \n"
+                + "(?, 1)";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, size.getTenSize());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+
+    }
+    public int update(Size size) {
+        int rowedit = 0;
+        String sql = "UPDATE Size set TenSize = ? WHERE ID_Size = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, size.getTenSize());
+            preparedStatement.setInt(2, size.getID_Size());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+    }
+    public int delete(Size size) {
+        int rowedit = 0;
+        String sql = "UPDATE Size set trangthai = ? WHERE ID_Size = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 0);
+            preparedStatement.setInt(2, size.getID_Size());
+            rowedit = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowedit;
+    }
+    public int khoiphuc(Size size) {
+        int khoiphuc = 0;
+        String sql = "UPDATE Size set trangthai = ? WHERE ID_Size = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 1);
+            preparedStatement.setInt(2, size.getID_Size());
+            khoiphuc = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return khoiphuc;
     }
 }
