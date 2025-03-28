@@ -38,9 +38,9 @@ public class KhachHangPanel extends javax.swing.JPanel {
             }
             for (KhachHang khachHang : khachHangs) {
                 Object[] row ={
-                    khachHang.getID_KH(),
+                    khachHang.getIdKH(),
                     khachHang.getHoTenKH(),
-                    khachHang.getSDT(),
+                    khachHang.getSdt(),
                     khachHang.getDiaChi(),
                     khachHang.getTrangThai()
                 };

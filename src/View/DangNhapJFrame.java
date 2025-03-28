@@ -91,7 +91,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Tên đăng nhập ");
+        jLabel2.setText("Số điện thoại");
 
         txtUserName.setActionCommand("<Not Set>");
 
@@ -287,9 +287,9 @@ public class DangNhapJFrame extends javax.swing.JFrame {
 
     }
 
-    private boolean KiemTra(String tdn, String mk) {
+    private boolean KiemTra(String sdt, String mk) {
         boolean kq = false;
-        NhanVien nhanVien = loginDao.Login(tdn, mk);
+        NhanVien nhanVien = loginDao.Login(sdt, mk);
         if (nhanVien != null) {
             SessionLogin.setNhanVienLogin(nhanVien);
             kq = true;

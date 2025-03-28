@@ -4,50 +4,50 @@
  */
 package Model;
 
-/**
- *
- * @author tuanb
- */
 public class Mau {
-
-    private int ID_Mau;
-    private String TenMau;
-    private int TrangThai;
+    private int idMau;
+    private String tenMau;
+    private int trangThai;
 
     public Mau() {
     }
+    
 
-    public Mau(int ID_Mau, String TenMau, int TrangThai) {
-        this.ID_Mau = ID_Mau;
-        this.TenMau = TenMau;
-        this.TrangThai = TrangThai;
+    public Mau(int idMau, String tenMau, int trangThai) {
+        this.idMau = idMau;
+        this.tenMau = tenMau;
+        this.trangThai = trangThai;
+    }
+    
+    // Getters and Setters
+    public int getIdMau() {
+        return idMau;
     }
 
-    public int getID_Mau() {
-        return ID_Mau;
-    }
-
-    public void setID_Mau(int ID_Mau) {
-        this.ID_Mau = ID_Mau;
+    public void setIdMau(int idMau) {
+        this.idMau = idMau;
     }
 
     public String getTenMau() {
-        return TenMau;
+        return tenMau;
     }
 
-    public void setTenMau(String TenMau) {
-        this.TenMau = TenMau;
+    public void setTenMau(String tenMau) {
+        this.tenMau = tenMau;
     }
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
-    public String toString(){
-        return TenMau;
+
+    // toString() method to display information
+    @Override
+    public String toString() {
+        return tenMau;
     }
-    
 }
+

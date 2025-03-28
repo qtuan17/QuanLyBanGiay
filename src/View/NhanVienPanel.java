@@ -4,9 +4,7 @@
  */
 package View;
 
-import Dao.ChucVuDao;
 import Dao.NhanVienDao;
-import Model.ChucVu;
 import Model.NhanVien;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.text.ParseException;
@@ -25,19 +23,13 @@ public class NhanVienPanel extends javax.swing.JPanel {
 
     private DefaultTableModel model;
     NhanVienDao nhanVienDao;
-    ChucVuDao chucVuDao;
     int index = -1;
 
     public NhanVienPanel(java.awt.Frame parent, boolean modal) throws Exception {
         UIManager.setLookAndFeel(new FlatIntelliJLaf());
         initComponents();
         nhanVienDao = new NhanVienDao();
-        chucVuDao = new ChucVuDao();
         fillTableNhanVien();
-        fillTableChucVu();
-
-        getCBBChucVu();
-
     }
 
     void fillTableNhanVien() {
@@ -51,14 +43,11 @@ public class NhanVienPanel extends javax.swing.JPanel {
             }
             for (NhanVien nhanVien : nhanViens) {
                 Object[] row = {
-                    nhanVien.getID_NV(),
-                    // Sử dụng toán tử 3 ngôi để hiển thị tên chức vụ
-                    nhanVien.getID_CV() == 1 ? "Leader"
-                    : nhanVien.getID_CV() == 2 ? "Nhân viên bán hàng" : "Khác",
+                    nhanVien.getIdNV(),
                     nhanVien.getHoTenNV(),
-                    nhanVien.getNgaysinh(),
+                    nhanVien.getNgaySinh(),
                     nhanVien.getDiaChi(),
-                    nhanVien.getUsername(),
+                    nhanVien.getSdt(),
                     nhanVien.getPassword(),
                     // Toán tử 3 ngôi để hiển thị trạng thái
                     nhanVien.getTrangThai() == 1 ? "Đang làm việc" : "Đã nghỉ"
@@ -70,28 +59,28 @@ public class NhanVienPanel extends javax.swing.JPanel {
         }
     }
 
-    void fillTableChucVu() {
-        DefaultTableModel modelCV = new DefaultTableModel();
-        modelCV = (DefaultTableModel) tblChucVu.getModel();
-        modelCV.setRowCount(0);
-        try {
-            List<ChucVu> chucVu = chucVuDao.findAll();
-            if (chucVu.isEmpty()) {
-
-            }
-            for (ChucVu cv : chucVu) {
-                Object[] row = {
-                    cv.getID_CV(),
-                    cv.getTenChucVu(),
-                    cv.getMoTa(),
-                    cv.getTrangThai()
-                };
-                modelCV.addRow(row);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    void fillTableChucVu() {
+//        DefaultTableModel modelCV = new DefaultTableModel();
+//        modelCV = (DefaultTableModel) tblChucVu.getModel();
+//        modelCV.setRowCount(0);
+//        try {
+//            List<ChucVu> chucVu = chucVuDao.findAll();
+//            if (chucVu.isEmpty()) {
+//
+//            }
+//            for (ChucVu cv : chucVu) {
+//                Object[] row = {
+//                    cv.getID_CV(),
+//                    cv.getTenChucVu(),
+//                    cv.getMoTa(),
+//                    cv.getTrangThai()
+//                };
+//                modelCV.addRow(row);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private NhanVien getFormNhanVien() {
         try {
@@ -100,7 +89,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
 
             // Nếu index không phải -1, gán ID từ txtIDNV
             if (index != -1) {
-                nhanVien.setId(Integer.parseInt(txtIDNV.getText()));
+                nhanVien.setIdNV(Integer.parseInt(txtIDNV.getText()));
             }
 
             // Gán họ tên
@@ -113,14 +102,14 @@ public class NhanVienPanel extends javax.swing.JPanel {
             try {
                 Date ngaysinh = dateFormat.parse(stringNgaySinh);
                 java.sql.Date sqlDate = new java.sql.Date(ngaysinh.getTime());
-                nhanVien.setNgaysinh(sqlDate);
+                nhanVien.setNgaySinh(sqlDate);
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(this, "Ngày sinh sai định dạng (yyyy-MM-dd)");
                 return null;
             }
             // Gán các giá trị khác từ form
             nhanVien.setDiaChi(txtDiaChi.getText());
-            nhanVien.setUsername(txtTaiKhoan.getText());
+            nhanVien.setSdt(txtTaiKhoan.getText());
             nhanVien.setPassword(txtMatKhau.getText());
 
             return nhanVien;
@@ -132,44 +121,29 @@ public class NhanVienPanel extends javax.swing.JPanel {
     }
 
     // fill combobox Chức Vụ
-    public void getCBBChucVu() {
-        List<ChucVu> lstCV = chucVuDao.findAll();
-        for (ChucVu cv : lstCV) {
-            cbbCV.addItem(cv.getTenChucVu());
-        }
+//    s
 
-    }
+//    private void setFormChucVu(int index) {
+//        if (index != -1) {
+//            String idCV = tblChucVu.getValueAt(index, 0).toString();
+//            String tenCV = tblChucVu.getValueAt(index, 1).toString();
+//            txtIDCV.setText(idCV);
+//            txtTenCV.setText(tenCV);
+//        }
+//    }
 
-    public int getIDCV() {
-        List<ChucVu> lstCV = chucVuDao.findAll();
-        int id = -1;
-        int index = cbbCV.getSelectedIndex();
-        ChucVu chucVu = lstCV.get(index);
-        id = chucVu.getID_CV();
-        return id;
-    }
-
-    private void setFormChucVu(int index) {
-        if (index != -1) {
-            String idCV = tblChucVu.getValueAt(index, 0).toString();
-            String tenCV = tblChucVu.getValueAt(index, 1).toString();
-            txtIDCV.setText(idCV);
-            txtTenCV.setText(tenCV);
-        }
-    }
-
-    private ChucVu getFormChucVu() {
-    ChucVu chucVu = new ChucVu();
-    if (index != -1) {
-        chucVu.setID_CV(Integer.parseInt(txtIDCV.getText())); // ID nếu có
-        System.out.println("Mã chức vụ: " + txtIDCV.getText());
-        chucVu.setMoTa(txtMoTa.getText());
-        System.out.println("Mô tả: " + txtMoTa.getText());  // Kiểm tra giá trị mô tả
-    }
-    chucVu.setTenChucVu(txtTenCV.getText());
-    System.out.println("Tên chức vụ: " + txtTenCV.getText());  // Kiểm tra tên chức vụ
-    return chucVu;
-}
+//    private ChucVu getFormChucVu() {
+//    ChucVu chucVu = new ChucVu();
+//    if (index != -1) {
+//        chucVu.setID_CV(Integer.parseInt(txtIDCV.getText())); // ID nếu có
+//        System.out.println("Mã chức vụ: " + txtIDCV.getText());
+//        chucVu.setMoTa(txtMoTa.getText());
+//        System.out.println("Mô tả: " + txtMoTa.getText());  // Kiểm tra giá trị mô tả
+//    }
+//    chucVu.setTenChucVu(txtTenCV.getText());
+//    System.out.println("Tên chức vụ: " + txtTenCV.getText());  // Kiểm tra tên chức vụ
+//    return chucVu;
+//}
 
 
     /**
@@ -194,7 +168,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
         BangNV = new javax.swing.JScrollPane();
         tblNV = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -204,7 +177,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
         btnAddNV = new javax.swing.JButton();
         btnEditNV = new javax.swing.JButton();
         btnDeleteNV = new javax.swing.JButton();
-        cbbCV = new javax.swing.JComboBox<>();
         btnKhoiPhuc = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
@@ -262,9 +234,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("ID");
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setText("Chức Vụ");
-
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("Họ Tên");
 
@@ -301,12 +270,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
         btnDeleteNV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete.png"))); // NOI18N
         btnDeleteNV.setText("Xóa");
 
-        cbbCV.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbbCVActionPerformed(evt);
-            }
-        });
-
         btnKhoiPhuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh-arrow.png"))); // NOI18N
         btnKhoiPhuc.setText("Khôi Phục");
 
@@ -329,12 +292,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtIDNV, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbbCV, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCCCD, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtDiaChi, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -347,7 +305,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnKhoiPhuc))
                     .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(391, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -359,10 +317,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(cbbCV, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
                         .addComponent(txtNgaySinh, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -518,14 +473,14 @@ public class NhanVienPanel extends javax.swing.JPanel {
                     .addComponent(btnKhoiPhucCV))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(535, Short.MAX_VALUE))
+                .addContainerGap(540, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Chức Vụ", jPanel2);
 
         jLabel2.setBackground(new java.awt.Color(0, 0, 0));
         jLabel2.setFont(new java.awt.Font("Calibri Light", 1, 48)); // NOI18N
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/web-development 64.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/profile.png"))); // NOI18N
         jLabel2.setText(" Quản Lí Nhân Viên");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -555,17 +510,39 @@ public class NhanVienPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnKhoiPhucCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKhoiPhucCVActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnKhoiPhucCVActionPerformed
+
+    private void btnAddCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCVActionPerformed
+        //        ChucVu chucVu = getFormChucVu();
+        //
+        //        // Kiểm tra dữ liệu đầu vào (đảm bảo không có giá trị rỗng hoặc null)
+        //        if (chucVu.getTenChucVu() == null || chucVu.getTenChucVu().isEmpty() || chucVu.getMoTa() == null || chucVu.getMoTa().isEmpty()) {
+            //            JOptionPane.showMessageDialog(this, "Tên chức vụ và mô tả không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            //            return;
+            //        }
+        //
+        //        // Thực hiện thêm mới chức vụ vào cơ sở dữ liệu
+        //        try {
+            //            int addCV = chucVuDao.create(chucVu);
+            //
+            //            if (addCV > 0) {
+                //                System.out.println("Thêm chức vụ thành công");
+                //                // Cập nhật lại bảng sau khi thêm thành công
+                //                fillTableChucVu();
+                //            } else {
+                //                JOptionPane.showMessageDialog(this, "Không thể thêm chức vụ. Vui lòng thử lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                //            }
+            //        } catch (Exception e) {
+            //            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi thêm chức vụ: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            //            e.printStackTrace();
+            //        }
+    }//GEN-LAST:event_btnAddCVActionPerformed
+
     private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
         // TODO add your handling code here:
     }//GEN-LAST:event_jPanel1AncestorAdded
-
-    private void txtCCCDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCCCDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCCCDActionPerformed
-
-    private void cbbCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbCVActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbbCVActionPerformed
 
     private void btnAddNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNVActionPerformed
         // TODO add your handling code here:
@@ -580,35 +557,9 @@ public class NhanVienPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnAddNVActionPerformed
 
-    private void btnKhoiPhucCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKhoiPhucCVActionPerformed
+    private void txtCCCDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCCCDActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnKhoiPhucCVActionPerformed
-
-    private void btnAddCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCVActionPerformed
-        ChucVu chucVu = getFormChucVu();
-
-        // Kiểm tra dữ liệu đầu vào (đảm bảo không có giá trị rỗng hoặc null)
-        if (chucVu.getTenChucVu() == null || chucVu.getTenChucVu().isEmpty() || chucVu.getMoTa() == null || chucVu.getMoTa().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tên chức vụ và mô tả không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Thực hiện thêm mới chức vụ vào cơ sở dữ liệu
-        try {
-            int addCV = chucVuDao.create(chucVu);
-
-            if (addCV > 0) {
-                System.out.println("Thêm chức vụ thành công");
-                // Cập nhật lại bảng sau khi thêm thành công
-                fillTableChucVu();
-            } else {
-                JOptionPane.showMessageDialog(this, "Không thể thêm chức vụ. Vui lòng thử lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi thêm chức vụ: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_btnAddCVActionPerformed
+    }//GEN-LAST:event_txtCCCDActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -621,7 +572,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnEditNV;
     private javax.swing.JButton btnKhoiPhuc;
     private javax.swing.JButton btnKhoiPhucCV;
-    private javax.swing.JComboBox<String> cbbCV;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -629,7 +579,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;

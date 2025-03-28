@@ -4,67 +4,67 @@
  */
 package Model;
 
-/**
- *
- * @author tuanb
- */
 public class KhachHang {
-    private int ID_KH;
-    private String HoTenKH;
-    private int SDT;
-    private String DiaChi;
-    private int TrangThai;
+    private int idKH;
+    private String hoTenKH;
+    private String sdt;
+    private String diaChi;
+    private int trangThai;
 
-    public KhachHang() {
+    public KhachHang(int idKH, String hoTenKH, String sdt, String diaChi, int trangThai) {
+        this.idKH = idKH;
+        this.hoTenKH = hoTenKH;
+        this.sdt = sdt;
+        this.diaChi = diaChi;
+        this.trangThai = trangThai;
     }
 
-    public KhachHang(int ID_KH, String HoTenKH, int SDT, String DiaChi, int TrangThai) {
-        this.ID_KH = ID_KH;
-        this.HoTenKH = HoTenKH;
-        this.SDT = SDT;
-        this.DiaChi = DiaChi;
-        this.TrangThai = TrangThai;
+    // Getters and Setters
+    public int getIdKH() {
+        return idKH;
     }
 
-    public int getID_KH() {
-        return ID_KH;
-    }
-
-    public void setID_KH(int ID_KH) {
-        this.ID_KH = ID_KH;
+    public void setIdKH(int idKH) {
+        this.idKH = idKH;
     }
 
     public String getHoTenKH() {
-        return HoTenKH;
+        return hoTenKH;
     }
 
-    public void setHoTenKH(String HoTenKH) {
-        this.HoTenKH = HoTenKH;
+    public void setHoTenKH(String hoTenKH) {
+        this.hoTenKH = hoTenKH;
     }
 
-    public int getSDT() {
-        return SDT;
+    public String getSdt() {
+        return sdt;
     }
 
-    public void setSDT(int SDT) {
-        this.SDT = SDT;
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
     }
 
     public String getDiaChi() {
-        return DiaChi;
+        return diaChi;
     }
 
-    public void setDiaChi(String DiaChi) {
-        this.DiaChi = DiaChi;
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
-    
-    
+
+    // toString() method to display information
+    @Override
+    public String toString() {
+        return "KhachHang [ID_KH=" + idKH + ", HoTenKH=" + hoTenKH + ", SDT=" + sdt + ", DiaChi=" + diaChi + 
+               ", TrangThai=" + trangThai + "]";
+    }
 }
+

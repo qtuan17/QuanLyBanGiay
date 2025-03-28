@@ -38,7 +38,7 @@ public class LoaiDialog extends javax.swing.JDialog {
             }
             for (Loai loai : loais) {
                 Object[] row = {
-                    loai.getID_Loai(),
+                    loai.getIdLoai(),
                     loai.getTenLoai(),
                     loai.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
                 };
@@ -51,7 +51,7 @@ public class LoaiDialog extends javax.swing.JDialog {
     private Loai getFormLoai() {
         Loai loai = new Loai();
         if (index != -1) {
-            loai.setID_Loai(Integer.parseInt(txtIDLoai.getText()));
+            loai.setIdLoai(Integer.parseInt(txtIDLoai.getText()));
         }
         loai.setTenLoai(txtTenLoai.getText());
         return loai;

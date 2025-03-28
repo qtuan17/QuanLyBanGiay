@@ -34,7 +34,7 @@ public class KhachHangDao {
                 KhachHang khachHang = new KhachHang(
                         resultSet.getInt("ID_KH"),
                         resultSet.getString("HoTenKH"),
-                        resultSet.getInt("SDT"),
+                        resultSet.getString("SDT"),
                         resultSet.getString("DiaChi"),
                         resultSet.getInt("TrangThai")
                 );

@@ -4,173 +4,118 @@
  */
 package Model;
 
-/**
- *
- * @author tuanb
- */
 public class ChiTietSanPham {
-    private int ID_CTSP;
-    private String TenGiay;
-    private int ID_SP;
-    private int ID_Mau;
-    private int ID_Size;
-    private int ID_Loai;
-    private String TenMau;
-    private String TenSize;
-    private String TenLoai;
-    private int SoLuong;
-    private float GiaTien;
-    private String HinhAnh;
-    private String GhiChu;
-    private int TrangThai;
-    
-    
-    public ChiTietSanPham() {
+    private int idCTSP;
+    private int idSP;
+    private int idMau;
+    private int idSize;
+    private int idLoai;
+    private int soLuong;
+    private double giaTien;
+    private String hinhAnh;
+    private String ghiChu;
+    private int trangThai;
+
+    public ChiTietSanPham(int idCTSP, int idSP, int idMau, int idSize, int idLoai, int soLuong, double giaTien, String hinhAnh, String ghiChu, int trangThai) {
+        this.idCTSP = idCTSP;
+        this.idSP = idSP;
+        this.idMau = idMau;
+        this.idSize = idSize;
+        this.idLoai = idLoai;
+        this.soLuong = soLuong;
+        this.giaTien = giaTien;
+        this.hinhAnh = hinhAnh;
+        this.ghiChu = ghiChu;
+        this.trangThai = trangThai;
     }
 
-    public ChiTietSanPham(int ID_CTSP,String TenGiay, String TenMau, String TenSize, String TenLoai, int SoLuong, float GiaTien, String HinhAnh, String GhiChu, int TrangThai) {
-        this.ID_CTSP = ID_CTSP;
-        this.TenGiay= TenGiay;
-        this.TenMau = TenMau;
-        this.TenSize = TenSize;
-        this.TenLoai = TenLoai;
-        this.SoLuong = SoLuong;
-        this.GiaTien = GiaTien;
-        this.HinhAnh = HinhAnh;
-        this.GhiChu = GhiChu;
-        this.TrangThai = TrangThai;
+    // Getters and Setters
+    public int getIdCTSP() {
+        return idCTSP;
     }
 
-    
-
-    
-    
-    public ChiTietSanPham(int ID_CTSP, int ID_SP, int ID_Mau, int ID_Size, int ID_Loai, int SoLuong, float GiaTien, String HinhAnh, String GhiChu, int TrangThai) {
-        this.ID_CTSP = ID_CTSP;
-        this.ID_SP = ID_SP;
-        this.ID_Mau = ID_Mau;
-        this.ID_Size = ID_Size;
-        this.ID_Loai = ID_Loai;
-        this.SoLuong = SoLuong;
-        this.GiaTien = GiaTien;
-        this.HinhAnh = HinhAnh;
-        this.GhiChu = GhiChu;
-        this.TrangThai = TrangThai;
+    public void setIdCTSP(int idCTSP) {
+        this.idCTSP = idCTSP;
     }
 
-    public int getID_CTSP() {
-        return ID_CTSP;
+    public int getIdSP() {
+        return idSP;
     }
 
-    public void setID_CTSP(int ID_CTSP) {
-        this.ID_CTSP = ID_CTSP;
+    public void setIdSP(int idSP) {
+        this.idSP = idSP;
     }
 
-    public String getTenGiay() {
-        return TenGiay;
+    public int getIdMau() {
+        return idMau;
     }
 
-    public void setTenGiay(String TenGiay) {
-        this.TenGiay = TenGiay;
+    public void setIdMau(int idMau) {
+        this.idMau = idMau;
     }
 
-    public int getID_SP() {
-        return ID_SP;
+    public int getIdSize() {
+        return idSize;
     }
 
-    public void setID_SP(int ID_SP) {
-        this.ID_SP = ID_SP;
+    public void setIdSize(int idSize) {
+        this.idSize = idSize;
     }
 
-    public int getID_Mau() {
-        return ID_Mau;
+    public int getIdLoai() {
+        return idLoai;
     }
 
-    public void setID_Mau(int ID_Mau) {
-        this.ID_Mau = ID_Mau;
-    }
-
-    public int getID_Size() {
-        return ID_Size;
-    }
-
-    public void setID_Size(int ID_Size) {
-        this.ID_Size = ID_Size;
-    }
-
-    public int getID_Loai() {
-        return ID_Loai;
-    }
-
-    public void setID_Loai(int ID_Loai) {
-        this.ID_Loai = ID_Loai;
-    }
-
-    public String getTenMau() {
-        return TenMau;
-    }
-
-    public void setTenMau(String TenMau) {
-        this.TenMau = TenMau;
-    }
-
-    public String getTenSize() {
-        return TenSize;
-    }
-
-    public void setTenSize(String TenSize) {
-        this.TenSize = TenSize;
-    }
-
-    public String getTenLoai() {
-        return TenLoai;
-    }
-
-    public void setTenLoai(String TenLoai) {
-        this.TenLoai = TenLoai;
+    public void setIdLoai(int idLoai) {
+        this.idLoai = idLoai;
     }
 
     public int getSoLuong() {
-        return SoLuong;
+        return soLuong;
     }
 
-    public void setSoLuong(int SoLuong) {
-        this.SoLuong = SoLuong;
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
     }
 
-    public float getGiaTien() {
-        return GiaTien;
+    public double getGiaTien() {
+        return giaTien;
     }
 
-    public void setGiaTien(float GiaTien) {
-        this.GiaTien = GiaTien;
+    public void setGiaTien(double giaTien) {
+        this.giaTien = giaTien;
     }
 
     public String getHinhAnh() {
-        return HinhAnh;
+        return hinhAnh;
     }
 
-    public void setHinhAnh(String HinhAnh) {
-        this.HinhAnh = HinhAnh;
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
     }
 
     public String getGhiChu() {
-        return GhiChu;
+        return ghiChu;
     }
 
-    public void setGhiChu(String GhiChu) {
-        this.GhiChu = GhiChu;
+    public void setGhiChu(String ghiChu) {
+        this.ghiChu = ghiChu;
     }
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
 
-    
-    
-    
+    // toString() method to display information
+    @Override
+    public String toString() {
+        return "ChiTietSanPham [ID_CTSP=" + idCTSP + ", ID_SP=" + idSP + ", ID_Mau=" + idMau + ", ID_Size=" + idSize + 
+               ", ID_Loai=" + idLoai + ", SoLuong=" + soLuong + ", GiaTien=" + giaTien + ", HinhAnh=" + hinhAnh + 
+               ", GhiChu=" + ghiChu + ", TrangThai=" + trangThai + "]";
+    }
 }
+

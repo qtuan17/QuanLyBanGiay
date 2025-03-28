@@ -38,7 +38,7 @@ public class NhanVienDao {
                         resultSet.getString("HoTenNV"),
                         resultSet.getDate("NgaySinh"),
                         resultSet.getString("DiaChi"),
-                        resultSet.getString("Username"),
+                        resultSet.getString("sdt"),
                         resultSet.getString("Password"),
                         resultSet.getInt("TrangThai")
                 );
@@ -57,18 +57,18 @@ public class NhanVienDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setInt(1, nhanVien.getID_NV());               // ID_NV
-            preparedStatement.setInt(2, nhanVien.getID_CV());               // ID_CV
+            preparedStatement.setInt(1, nhanVien.getIdNV());               // ID_NV
+            preparedStatement.setInt(2, nhanVien.getIdCV());               // ID_CV
             preparedStatement.setString(3, nhanVien.getHoTenNV());          // HoTenNV
 
             // Kiểm tra và chuyển đổi NgaySinh sang java.sql.Date nếu cần
-            java.sql.Date sqlDate = nhanVien.getNgaysinh() != null
-                    ? new java.sql.Date(nhanVien.getNgaysinh().getTime())
+            java.sql.Date sqlDate = nhanVien.getNgaySinh() != null
+                    ? new java.sql.Date(nhanVien.getNgaySinh().getTime())
                     : null;
             preparedStatement.setDate(4, sqlDate);                         // NgaySinh
 
             preparedStatement.setString(5, nhanVien.getDiaChi());           // DiaChi
-            preparedStatement.setString(6, nhanVien.getUsername());         // Username
+            preparedStatement.setString(6, nhanVien.getSdt());         // Username
             preparedStatement.setString(7, nhanVien.getPassword());         // Password
             preparedStatement.setInt(8, nhanVien.getTrangThai());           // TrangThai
 

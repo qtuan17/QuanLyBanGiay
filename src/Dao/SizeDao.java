@@ -65,7 +65,7 @@ public class SizeDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, size.getTenSize());
-            preparedStatement.setInt(2, size.getID_Size());
+            preparedStatement.setInt(2, size.getIdSize());
             rowedit = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,7 +78,7 @@ public class SizeDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 0);
-            preparedStatement.setInt(2, size.getID_Size());
+            preparedStatement.setInt(2, size.getIdSize());
             rowedit = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +91,7 @@ public class SizeDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 1);
-            preparedStatement.setInt(2, size.getID_Size());
+            preparedStatement.setInt(2, size.getIdSize());
             khoiphuc = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

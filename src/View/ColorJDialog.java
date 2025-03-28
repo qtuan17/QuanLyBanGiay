@@ -41,7 +41,7 @@ public class ColorJDialog extends javax.swing.JDialog {
             }
             for (Mau mau : maus) {
                 Object[] row = {
-                    mau.getID_Mau(),
+                    mau.getIdMau(),
                     mau.getTenMau(),
                     mau.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
                 };
@@ -54,7 +54,7 @@ public class ColorJDialog extends javax.swing.JDialog {
     private Mau getFormMau() {
         Mau mau = new Mau();
         if (index != -1) {
-            mau.setID_Mau(Integer.parseInt(txtIDMau.getText()));
+            mau.setIdMau(Integer.parseInt(txtIDMau.getText()));
         }
         mau.setTenMau(txtTenMau.getText());
         return mau;

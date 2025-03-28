@@ -63,7 +63,7 @@ public class LoaiDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, loai.getTenLoai());
-            preparedStatement.setInt(2, loai.getID_Loai());
+            preparedStatement.setInt(2, loai.getIdLoai());
             rowedit = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -76,7 +76,7 @@ public class LoaiDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 0);
-            preparedStatement.setInt(2, loai.getID_Loai());
+            preparedStatement.setInt(2, loai.getIdLoai());
             rowedit = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,7 +89,7 @@ public class LoaiDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 1);
-            preparedStatement.setInt(2, loai.getID_Loai());
+            preparedStatement.setInt(2, loai.getIdLoai());
             rowedit = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

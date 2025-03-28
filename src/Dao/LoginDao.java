@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import util.SessionLogin;
 
 /**
  *
@@ -24,13 +25,13 @@ public class LoginDao {
         connection = util.DBContext.getConnection();
     }
 
-    public NhanVien Login(String username, String password) {
-        String sql = "SELECT * FROM NhanVien WHERE Username = ? AND Password = ?";
+    public NhanVien Login(String sdt, String password) {
+        String sql = "SELECT * FROM NhanVien WHERE SDT = ? AND Password = ?";
         NhanVien nhanVien = null;
 
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, username);
+            preparedStatement.setString(1, sdt);
             preparedStatement.setString(2, password);
             resultSet = preparedStatement.executeQuery();
 
@@ -41,12 +42,11 @@ public class LoginDao {
                         resultSet.getString("HoTenNV"),
                         resultSet.getDate("NgaySinh"),
                         resultSet.getString("DiaChi"),
-                        resultSet.getString("Username"),
+                        resultSet.getString("SDT"),
                         resultSet.getString("Password"),
-                        resultSet.getInt("TrangThai")
-                        
-                );
+                        resultSet.getInt("TrangThai"));
                 // de o day
+                SessionLogin.setNhanVienLogin(nhanVien);
             }
 
         } catch (SQLException e) {

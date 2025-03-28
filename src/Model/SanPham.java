@@ -4,69 +4,67 @@
  */
 package Model;
 
-/**
- *
- * @author tuanb
- */
 public class SanPham {
-    private int ID_SP;
-    private String MaGiay;
-    private String TenGiay;
-    private int ID_Loai;
-    private int TrangThai;
+    private int idSP;
+    private String maGiay;
+    private String tenGiay;
+    private int idLoai;
+    private int trangThai;
 
-    public SanPham() {
+    public SanPham(int idSP, String maGiay, String tenGiay, int idLoai, int trangThai) {
+        this.idSP = idSP;
+        this.maGiay = maGiay;
+        this.tenGiay = tenGiay;
+        this.idLoai = idLoai;
+        this.trangThai = trangThai;
     }
 
-    public SanPham(int ID_SP, String MaGiay, String TenGiay, int ID_Loai, int TrangThai) {
-        this.ID_SP = ID_SP;
-        this.MaGiay = MaGiay;
-        this.TenGiay = TenGiay;
-        this.ID_Loai = ID_Loai;
-        this.TrangThai = TrangThai;
+    // Getters and Setters
+    public int getIdSP() {
+        return idSP;
     }
 
-    public int getID_SP() {
-        return ID_SP;
-    }
-
-    public void setID_SP(int ID_SP) {
-        this.ID_SP = ID_SP;
+    public void setIdSP(int idSP) {
+        this.idSP = idSP;
     }
 
     public String getMaGiay() {
-        return MaGiay;
+        return maGiay;
     }
 
-    public void setMaGiay(String MaGiay) {
-        this.MaGiay = MaGiay;
+    public void setMaGiay(String maGiay) {
+        this.maGiay = maGiay;
     }
 
     public String getTenGiay() {
-        return TenGiay;
+        return tenGiay;
     }
 
-    public void setTenGiay(String TenGiay) {
-        this.TenGiay = TenGiay;
+    public void setTenGiay(String tenGiay) {
+        this.tenGiay = tenGiay;
     }
 
-    public int getID_Loai() {
-        return ID_Loai;
+    public int getIdLoai() {
+        return idLoai;
     }
 
-    public void setID_Loai(int ID_Loai) {
-        this.ID_Loai = ID_Loai;
+    public void setIdLoai(int idLoai) {
+        this.idLoai = idLoai;
     }
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
-    
-    
-    
-    
+
+    // toString() method to display information
+    @Override
+    public String toString() {
+        return "SanPham [ID_SP=" + idSP + ", MaGiay=" + maGiay + ", TenGiay=" + tenGiay + ", ID_Loai=" + idLoai + 
+               ", TrangThai=" + trangThai + "]";
+    }
 }
+

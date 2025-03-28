@@ -38,7 +38,7 @@ public class SizeJDialog extends javax.swing.JDialog {
             }
             for (Size size : sizes) {
                 Object[] row = {
-                    size.getID_Size(),
+                    size.getIdSize(),
                     size.getTenSize(),
                     size.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
                 };
@@ -51,7 +51,7 @@ public class SizeJDialog extends javax.swing.JDialog {
     private Size getFormSize() {
         Size size = new Size();
         if (index != -1) {
-            size.setID_Size(Integer.parseInt(txtIDSize.getText()));
+            size.setIdSize(Integer.parseInt(txtIDSize.getText()));
         }
         size.setTenSize(txtTenSize.getText());
         return size;

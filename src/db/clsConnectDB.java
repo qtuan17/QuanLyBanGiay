@@ -16,7 +16,7 @@ import java.sql.Statement;
  */
 public class clsConnectDB {
     String connectionString = "jdbc:sqlserver://localhost:1433;" 
-            + "databaseName=PRO1401_QuanLiBanGiayNike;user=sa;password=123;";
+            + "databaseName=SHOSE_SHOP_VER2;user=sa;password=123;";
     Connection conn;
     public clsConnectDB(){
        

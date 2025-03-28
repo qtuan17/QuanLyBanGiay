@@ -6,106 +6,111 @@ package Model;
 
 import java.util.Date;
 
-
-/**
- *
- * @author tuanb
- */
 public class NhanVien {
-    private int ID_NV;
-    private int ID_CV;
-    private String HoTenNV;
-    private Date Ngaysinh;
-    private String DiaChi;
-    private String Username;
-    private String Password;
-    private int TrangThai;
+
+    private int idNV;
+    private int idCV;
+    private String hoTenNV;
+    private Date ngaySinh;
+    private String diaChi;
+    private String sdt;
+    private String password;
+    private int trangThai;
+    private boolean role;
+
+    public NhanVien(int idNV, int idCV, String hoTenNV, Date ngaySinh, String diaChi, String sdt, String password, int trangThai) {
+        this.idNV = idNV;
+        this.idCV = idCV;
+        this.hoTenNV = hoTenNV;
+        this.ngaySinh = ngaySinh;
+        this.diaChi = diaChi;
+        this.sdt = sdt;
+        this.password = password;
+        this.trangThai = trangThai;
+        this.role = role;
+    }
 
     public NhanVien() {
     }
-
-    public NhanVien(int ID_NV, int ID_CV, String HoTenNV, Date Ngaysinh, String DiaChi, String Username, String Password, int TrangThai) {
-        this.ID_NV = ID_NV;
-        this.ID_CV = ID_CV;
-        this.HoTenNV = HoTenNV;
-        this.Ngaysinh = Ngaysinh;
-        this.DiaChi = DiaChi;
-        this.Username = Username;
-        this.Password = Password;
-        this.TrangThai = TrangThai;
+    
+    // Getters and Setters
+    public int getIdNV() {
+        return idNV;
     }
 
-    public int getID_NV() {
-        return ID_NV;
+    public void setIdNV(int idNV) {
+        this.idNV = idNV;
     }
 
-    public void setID_NV(int ID_NV) {
-        this.ID_NV = ID_NV;
+    public int getIdCV() {
+        return idCV;
     }
 
-    public int getID_CV() {
-        return ID_CV;
-    }
-
-    public void setID_CV(int ID_CV) {
-        this.ID_CV = ID_CV;
+    public void setIdCV(int idCV) {
+        this.idCV = idCV;
     }
 
     public String getHoTenNV() {
-        return HoTenNV;
+        return hoTenNV;
     }
 
-    public void setHoTenNV(String HoTenNV) {
-        this.HoTenNV = HoTenNV;
+    public void setHoTenNV(String hoTenNV) {
+        this.hoTenNV = hoTenNV;
     }
 
-    public Date getNgaysinh() {
-        return Ngaysinh;
+    public Date getNgaySinh() {
+        return ngaySinh;
     }
 
-    public void setNgaysinh(Date Ngaysinh) {
-        this.Ngaysinh = Ngaysinh;
+    public void setNgaySinh(Date ngaySinh) {
+        this.ngaySinh = ngaySinh;
     }
 
     public String getDiaChi() {
-        return DiaChi;
+        return diaChi;
     }
 
-    public void setDiaChi(String DiaChi) {
-        this.DiaChi = DiaChi;
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
 
-    public String getUsername() {
-        return Username;
+    public String getSdt() {
+        return sdt;
     }
 
-    public void setUsername(String Username) {
-        this.Username = Username;
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
-    public void setPassword(String Password) {
-        this.Password = Password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
-    }
-    
-    
-
-    public void setId(int parseInt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
 
-    
-    
-    
+    public boolean isRole() {
+        return role;
+    }
+
+    public void setRole(boolean role) {
+        this.role = role;
+    }
+
+    // toString() method to display information
+    @Override
+    public String toString() {
+        return "NhanVien [ID_NV=" + idNV + ", ID_CV=" + idCV + ", HoTenNV=" + hoTenNV + ", NgaySinh=" + ngaySinh
+                + ", DiaChi=" + diaChi + ", SDT=" + sdt + ", Password=" + password + ", TrangThai=" + trangThai
+                + ", Role=" + role + "]";
+    }
 }

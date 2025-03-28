@@ -4,49 +4,49 @@
  */
 package Model;
 
-/**
- *
- * @author tuanb
- */
 public class Loai {
-    private int ID_Loai;
-    private String TenLoai;
-    private int TrangThai;
+    private int idLoai;
+    private String tenLoai;
+    private int trangThai;
 
     public Loai() {
     }
 
-    public Loai(int ID_Loai, String TenLoai, int TrangThai) {
-        this.ID_Loai = ID_Loai;
-        this.TenLoai = TenLoai;
-        this.TrangThai = TrangThai;
+    public Loai(int idLoai, String tenLoai, int trangThai) {
+        this.idLoai = idLoai;
+        this.tenLoai = tenLoai;
+        this.trangThai = trangThai;
     }
 
-    public int getID_Loai() {
-        return ID_Loai;
+    // Getters and Setters
+    public int getIdLoai() {
+        return idLoai;
     }
 
-    public void setID_Loai(int ID_Loai) {
-        this.ID_Loai = ID_Loai;
+    public void setIdLoai(int idLoai) {
+        this.idLoai = idLoai;
     }
 
     public String getTenLoai() {
-        return TenLoai;
+        return tenLoai;
     }
 
-    public void setTenLoai(String TenLoai) {
-        this.TenLoai = TenLoai;
+    public void setTenLoai(String tenLoai) {
+        this.tenLoai = tenLoai;
     }
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
-    public String toString(){
-        return TenLoai;
+
+    // toString() method to display information
+    @Override
+    public String toString() {
+        return tenLoai;
     }
-    
 }
+

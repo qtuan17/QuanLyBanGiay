@@ -97,13 +97,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="txtIDNV" min="-2" pref="420" max="-2" attributes="0"/>
                           <Component id="txtTaiKhoan" min="-2" pref="420" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="txtHoTen" min="-2" pref="420" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="cbbCV" min="-2" pref="165" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="txtHoTen" alignment="0" min="-2" pref="420" max="-2" attributes="0"/>
                           <Component id="txtNgaySinh" alignment="0" min="-2" pref="420" max="-2" attributes="0"/>
                           <Component id="txtCCCD" alignment="0" min="-2" pref="420" max="-2" attributes="0"/>
                           <Component id="txtDiaChi" min="-2" pref="420" max="-2" attributes="0"/>
@@ -118,7 +112,7 @@
                           </Group>
                           <Component id="txtMatKhau" alignment="0" min="-2" pref="420" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="140" max="32767" attributes="0"/>
+                      <EmptySpace pref="391" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -133,11 +127,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="txtHoTen" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
-                                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="cbbCV" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="txtHoTen" min="-2" pref="26" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Component id="txtNgaySinh" min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
@@ -280,14 +270,6 @@
                 <Property name="text" type="java.lang.String" value="ID"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="14" style="0"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Ch&#x1ee9;c V&#x1ee5;"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -374,19 +356,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="X&#xf3;a"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="cbbCV">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="0"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbbCVActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="btnKhoiPhuc">
               <Properties>
@@ -498,7 +467,7 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jScrollPane2" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="535" max="32767" attributes="0"/>
+                      <EmptySpace pref="540" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -646,7 +615,7 @@
           <Font name="Calibri Light" size="48" style="1"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/web-development 64.png"/>
+          <Image iconType="3" name="/icons/profile.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value=" Qu&#x1ea3;n L&#xed; Nh&#xe2;n Vi&#xea;n"/>
       </Properties>
