@@ -28,6 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import util.SessionLogin;
 import viewModel.ChiTietSanPhamView;
+import viewModel.HoaDonView;
 
 /**
  *
@@ -57,23 +58,14 @@ public class SanPhamPanel extends javax.swing.JPanel {
         sizeDao = new SizeDao();
         hoaDonDao = new HoaDonDao();
         sanphams = chiTietSanPhamDao.findAll();
-
         fillTableChiTietSP();
         fillTaleChiTietSP1();
         fillTaleHoaDon();
-        fillNhanVienLogin();
         fillCbbColor();
         fillCbbLoai();
         fillCbbSize();
     }
 
-    void fillNhanVienLogin() {
-        NhanVien nhanVien = SessionLogin.getNhanVienLogin();
-        txtMaNV1.setText(String.valueOf(nhanVien.getIdNV()));
-        txtTenNV1.setText(nhanVien.getHoTenNV());
-        txtCV1.setText(nhanVien.isRole() == false ? "Quản lý" : "Nhân Viên");
-
-    }
 
     public void fillCbbColor() {
         DefaultComboBoxModel cbbColor = (DefaultComboBoxModel) this.cbbColor.getModel();
@@ -175,18 +167,19 @@ public class SanPhamPanel extends javax.swing.JPanel {
         modelhoadon = (DefaultTableModel) tblHoaDon.getModel();
         modelhoadon.setRowCount(0);
         try {
-            List<HoaDon> hoaDons = hoaDonDao.findAll();
+            List<HoaDonView> hoaDons = hoaDonDao.findAll();
             if (hoaDons.isEmpty()) {
                 System.out.println("chi tiet null");
             }
-            for (HoaDon hoaDon : hoaDons) {
+            for (HoaDonView hoaDon : hoaDons) {
                 Object[] row = {
-                    hoaDon.getIdHD(),
-                    hoaDon.getIdNV(),
+                    hoaDon.getIdHd(),
+                    hoaDon.getHoTenNV(),
+                    hoaDon.getHoTenKH(),
                     hoaDon.getThanhTien(),
                     hoaDon.getPttt(),
                     hoaDon.getNgayTao(),
-                    hoaDon.getTrangThai()};
+                    hoaDon.trangThaiToString(hoaDon.getTrangThai())};
 //                    hoaDon.getTrangThai() == 1 ? "Còn Hàng" : "Hết Hàng",};
                 modelhoadon.addRow(row);
             }
@@ -288,7 +281,13 @@ public class SanPhamPanel extends javax.swing.JPanel {
 //            System.out.println("lỗi:" + e);
 //        }
 //    }
-
+    double tongTien(){
+        double tongTien = 0;
+        for (ChiTietSanPhamView chiTietSanPhamView : gioHang) {
+            tongTien+=(chiTietSanPhamView.getSoLuong()*chiTietSanPhamView.getGiaTien());
+        }
+        return tongTien;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -331,11 +330,11 @@ public class SanPhamPanel extends javax.swing.JPanel {
         jPanel13 = new javax.swing.JPanel();
         jPanel14 = new javax.swing.JPanel();
         jLabel28 = new javax.swing.JLabel();
-        txtMaNV1 = new javax.swing.JTextField();
+        txtIDHD = new javax.swing.JTextField();
         jLabel29 = new javax.swing.JLabel();
-        txtTenNV1 = new javax.swing.JTextField();
+        txtTenNhanVien = new javax.swing.JTextField();
         jLabel30 = new javax.swing.JLabel();
-        txtCV1 = new javax.swing.JTextField();
+        txtKhachHAng = new javax.swing.JTextField();
         jLabel32 = new javax.swing.JLabel();
         jPanel15 = new javax.swing.JPanel();
         txtTongTienHang = new javax.swing.JTextField();
@@ -558,25 +557,25 @@ public class SanPhamPanel extends javax.swing.JPanel {
         jPanel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel13.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        jLabel28.setText("Mã NV");
+        jLabel28.setText("Mã HD");
 
-        txtMaNV1.setEditable(false);
-        txtMaNV1.addActionListener(new java.awt.event.ActionListener() {
+        txtIDHD.setEditable(false);
+        txtIDHD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMaNV1ActionPerformed(evt);
+                txtIDHDActionPerformed(evt);
             }
         });
 
-        jLabel29.setText("Tên NV");
+        jLabel29.setText("Nhân Viên");
 
-        txtTenNV1.setEditable(false);
+        txtTenNhanVien.setEditable(false);
 
-        jLabel30.setText("Chức Vụ");
+        jLabel30.setText("Khách Hang");
 
-        txtCV1.setEditable(false);
-        txtCV1.addActionListener(new java.awt.event.ActionListener() {
+        txtKhachHAng.setEditable(false);
+        txtKhachHAng.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCV1ActionPerformed(evt);
+                txtKhachHAngActionPerformed(evt);
             }
         });
 
@@ -592,9 +591,9 @@ public class SanPhamPanel extends javax.swing.JPanel {
                     .addComponent(jLabel30))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCV1)
-                    .addComponent(txtMaNV1)
-                    .addComponent(txtTenNV1))
+                    .addComponent(txtKhachHAng)
+                    .addComponent(txtIDHD)
+                    .addComponent(txtTenNhanVien))
                 .addContainerGap())
         );
         jPanel14Layout.setVerticalGroup(
@@ -603,15 +602,15 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
-                    .addComponent(txtMaNV1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIDHD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTenNV1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTenNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel29))
                 .addGap(20, 20, 20)
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel30)
-                    .addComponent(txtCV1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtKhachHAng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 37, Short.MAX_VALUE))
         );
 
@@ -801,15 +800,20 @@ public class SanPhamPanel extends javax.swing.JPanel {
 
         tblHoaDon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã HD", "Mã NV", "Thành Tiền", "PTTT", "Ngày Tạo", "Trạng Thái"
+                "MÃ HD", "Nhân Viên", "Khách Hàng", "Thành Tiền", "PTTT", "Ngày Tạo", "Trạng Thái"
             }
         ));
+        tblHoaDon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblHoaDonMouseClicked(evt);
+            }
+        });
         jScrollPane10.setViewportView(tblHoaDon);
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -971,11 +975,16 @@ public class SanPhamPanel extends javax.swing.JPanel {
         int row = tblSanPham.getSelectedRow();
         ChiTietSanPhamView chiTietSanPhamView = sanphams.get(row);
         addGioHang(chiTietSanPhamView);
+        txtTongTienHang.setText(String.valueOf(tongTien()));
         fillGioHang();
     }//GEN-LAST:event_tblSanPhamMouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        if(txtIDHD.getText().equals("")||txtIDHD.getText()==null){
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn hoá đơn để thanh toán", "Thông báo lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void cbbPTTT1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbPTTT1ActionPerformed
@@ -985,6 +994,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private void btnLamMoiGioHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoiGioHangActionPerformed
         // TODO add your handling code here:
         gioHang.clear();
+        txtTongTienHang.setText(String.valueOf(tongTien()));
         fillGioHang();
     }//GEN-LAST:event_btnLamMoiGioHangActionPerformed
 
@@ -1004,6 +1014,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 chiTietSanPhamView.setSoLuong(number);
                 gioHang.set(row, chiTietSanPhamView);
                 fillGioHang();
+                txtTongTienHang.setText(String.valueOf(tongTien()));
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -1015,6 +1026,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
         int row = tblGioHang.getSelectedRow();
         gioHang.remove(row);
         fillGioHang();;
+        txtTongTienHang.setText(String.valueOf(tongTien()));
 
     }//GEN-LAST:event_btnXoaGioHangActionPerformed
 
@@ -1067,13 +1079,24 @@ public class SanPhamPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddSPActionPerformed
 
-    private void txtCV1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCV1ActionPerformed
+    private void txtKhachHAngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtKhachHAngActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCV1ActionPerformed
+    }//GEN-LAST:event_txtKhachHAngActionPerformed
 
-    private void txtMaNV1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaNV1ActionPerformed
+    private void txtIDHDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIDHDActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMaNV1ActionPerformed
+    }//GEN-LAST:event_txtIDHDActionPerformed
+
+    private void tblHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoaDonMouseClicked
+        // TODO add your handling code here:
+        int row = tblHoaDon.getSelectedRow();
+        int idHD =(int) tblHoaDon.getValueAt(row, 0);
+        String tenNhanVien = tblHoaDon.getValueAt(row, 1).toString();
+        String tenKhachHang = tblHoaDon.getValueAt(row, 2).toString();
+        txtIDHD.setText(String.valueOf(idHD));
+        txtTenNhanVien.setText(tenNhanVien);
+        txtKhachHAng.setText(tenKhachHang);
+    }//GEN-LAST:event_tblHoaDonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1141,9 +1164,9 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JTable tblHoaDon;
     private javax.swing.JTable tblSP;
     private javax.swing.JTable tblSanPham;
-    private javax.swing.JTextField txtCV1;
-    private javax.swing.JTextField txtMaNV1;
-    private javax.swing.JTextField txtTenNV1;
+    private javax.swing.JTextField txtIDHD;
+    private javax.swing.JTextField txtKhachHAng;
+    private javax.swing.JTextField txtTenNhanVien;
     private javax.swing.JTextField txtTongTienHang;
     // End of variables declaration//GEN-END:variables
 }

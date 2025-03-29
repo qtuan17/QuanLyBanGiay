@@ -567,9 +567,9 @@
                                   </Group>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtCV1" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtMaNV1" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="txtTenNV1" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="txtKhachHAng" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="txtIDHD" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="txtTenNhanVien" alignment="0" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -581,17 +581,17 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="jLabel28" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtMaNV1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtIDHD" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="txtTenNV1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtTenNhanVien" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel29" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="jLabel30" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtCV1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtKhachHAng" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="0" pref="37" max="32767" attributes="0"/>
                               </Group>
@@ -601,38 +601,38 @@
                       <SubComponents>
                         <Component class="javax.swing.JLabel" name="jLabel28">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="M&#xe3; NV"/>
+                            <Property name="text" type="java.lang.String" value="M&#xe3; HD"/>
                           </Properties>
                         </Component>
-                        <Component class="javax.swing.JTextField" name="txtMaNV1">
+                        <Component class="javax.swing.JTextField" name="txtIDHD">
                           <Properties>
                             <Property name="editable" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtMaNV1ActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtIDHDActionPerformed"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel29">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="T&#xea;n NV"/>
+                            <Property name="text" type="java.lang.String" value="Nh&#xe2;n Vi&#xea;n"/>
                           </Properties>
                         </Component>
-                        <Component class="javax.swing.JTextField" name="txtTenNV1">
+                        <Component class="javax.swing.JTextField" name="txtTenNhanVien">
                           <Properties>
                             <Property name="editable" type="boolean" value="false"/>
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel30">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Ch&#x1ee9;c V&#x1ee5;"/>
+                            <Property name="text" type="java.lang.String" value="Kh&#xe1;ch Hang"/>
                           </Properties>
                         </Component>
-                        <Component class="javax.swing.JTextField" name="txtCV1">
+                        <Component class="javax.swing.JTextField" name="txtKhachHAng">
                           <Properties>
                             <Property name="editable" type="boolean" value="false"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCV1ActionPerformed"/>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtKhachHAngActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -1069,9 +1069,10 @@
                         <Component class="javax.swing.JTable" name="tblHoaDon">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="6" rowCount="4">
-                                <Column editable="true" title="M&#xe3; HD" type="java.lang.Object"/>
-                                <Column editable="true" title="M&#xe3; NV" type="java.lang.Object"/>
+                              <Table columnCount="7" rowCount="4">
+                                <Column editable="true" title="M&#xc3; HD" type="java.lang.Object"/>
+                                <Column editable="true" title="Nh&#xe2;n Vi&#xea;n" type="java.lang.Object"/>
+                                <Column editable="true" title="Kh&#xe1;ch H&#xe0;ng" type="java.lang.Object"/>
                                 <Column editable="true" title="Th&#xe0;nh Ti&#x1ec1;n" type="java.lang.Object"/>
                                 <Column editable="true" title="PTTT" type="java.lang.Object"/>
                                 <Column editable="true" title="Ng&#xe0;y T&#x1ea1;o" type="java.lang.Object"/>
@@ -1110,12 +1111,20 @@
                                   <Editor/>
                                   <Renderer/>
                                 </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
                               </TableColumnModel>
                             </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
                           </Properties>
+                          <Events>
+                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblHoaDonMouseClicked"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>

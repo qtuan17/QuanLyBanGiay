@@ -101,6 +101,11 @@ public class TrangChuJFrame extends javax.swing.JFrame {
         jButton5.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/bill.png"))); // NOI18N
         jButton5.setText("Hóa Đơn");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         btnKH.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         btnKH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/handshake.png"))); // NOI18N
@@ -251,6 +256,18 @@ public class TrangChuJFrame extends javax.swing.JFrame {
     private void btnThongKeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThongKeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnThongKeActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        try {
+    showPanel(new HoaDonPanel(this, rootPaneCheckingEnabled));
+} catch (Exception e) {
+    e.printStackTrace();
+    System.out.println("List Nhan Vien");
+}
+
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
     private void showPanel(JPanel panel) {
         childPanel = panel;
         panelMain.removeAll();

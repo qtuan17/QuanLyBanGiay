@@ -4,18 +4,24 @@
  */
 package View;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author tuanb
  */
 public class HoaDonPanel extends javax.swing.JPanel {
 
-    /**
-     * Creates new form HoaDonPanel
-     */
-    public HoaDonPanel() {
+  private DefaultTableModel model;
+    public HoaDonPanel(java.awt.Frame parent, boolean modal) throws Exception{
+        UIManager.setLookAndFeel(new FlatIntelliJLaf());
         initComponents();
     }
+
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -220,13 +220,13 @@ public class NhanVienPanel extends javax.swing.JPanel {
 
         tblNV.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Chức Vụ", "Họ Tên", "Ngày Sinh", "Địa Chỉ", "Tài Khoản", "Mật Khẩu", "Trạng Thái"
+                "ID", "Họ Tên", "Ngày Sinh", "Địa Chỉ", "Tài Khoản", "Mật Khẩu", "Trạng Thái"
             }
         ));
         BangNV.setViewportView(tblNV);
