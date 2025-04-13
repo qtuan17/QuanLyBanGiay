@@ -11,12 +11,23 @@ public class KhachHang {
     private String diaChi;
     private int trangThai;
 
+    public KhachHang(String hoTenKH, String sdt, String diaChi, int trangThai) {
+        this.hoTenKH = hoTenKH;
+        this.sdt = sdt;
+        this.diaChi = diaChi;
+        this.trangThai = trangThai;
+    }
+
     public KhachHang(int idKH, String hoTenKH, String sdt, String diaChi, int trangThai) {
         this.idKH = idKH;
         this.hoTenKH = hoTenKH;
         this.sdt = sdt;
         this.diaChi = diaChi;
         this.trangThai = trangThai;
+    }
+
+    public KhachHang() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     // Getters and Setters
@@ -63,8 +74,7 @@ public class KhachHang {
     // toString() method to display information
     @Override
     public String toString() {
-        return "KhachHang [ID_KH=" + idKH + ", HoTenKH=" + hoTenKH + ", SDT=" + sdt + ", DiaChi=" + diaChi + 
-               ", TrangThai=" + trangThai + "]";
+        return getSdt();
     }
 }
 

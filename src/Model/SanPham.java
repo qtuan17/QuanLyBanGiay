@@ -63,8 +63,7 @@ public class SanPham {
     // toString() method to display information
     @Override
     public String toString() {
-        return "SanPham [ID_SP=" + idSP + ", MaGiay=" + maGiay + ", TenGiay=" + tenGiay + ", ID_Loai=" + idLoai + 
-               ", TrangThai=" + trangThai + "]";
+        return tenGiay;
     }
 }
 

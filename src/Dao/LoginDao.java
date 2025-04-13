@@ -38,13 +38,14 @@ public class LoginDao {
             if (resultSet.next()) {
                 nhanVien = new NhanVien(
                         resultSet.getInt("ID_NV"),
-                        resultSet.getInt("ID_CV"),
                         resultSet.getString("HoTenNV"),
                         resultSet.getDate("NgaySinh"),
                         resultSet.getString("DiaChi"),
                         resultSet.getString("SDT"),
                         resultSet.getString("Password"),
-                        resultSet.getInt("TrangThai"));
+                        resultSet.getInt("TrangThai"),
+                        resultSet.getBoolean("Role")
+                );
                 // de o day
                 SessionLogin.setNhanVienLogin(nhanVien);
             }

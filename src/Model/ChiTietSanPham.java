@@ -9,25 +9,32 @@ public class ChiTietSanPham {
     private int idSP;
     private int idMau;
     private int idSize;
-    private int idLoai;
     private int soLuong;
     private double giaTien;
-    private String hinhAnh;
-    private String ghiChu;
     private int trangThai;
 
-    public ChiTietSanPham(int idCTSP, int idSP, int idMau, int idSize, int idLoai, int soLuong, double giaTien, String hinhAnh, String ghiChu, int trangThai) {
+    public ChiTietSanPham(int idCTSP, int idSP, int idMau, int idSize, int soLuong, double giaTien, int trangThai) {
         this.idCTSP = idCTSP;
         this.idSP = idSP;
         this.idMau = idMau;
         this.idSize = idSize;
-        this.idLoai = idLoai;
         this.soLuong = soLuong;
         this.giaTien = giaTien;
-        this.hinhAnh = hinhAnh;
-        this.ghiChu = ghiChu;
         this.trangThai = trangThai;
     }
+
+    public ChiTietSanPham(int idSP, int idMau, int idSize, int soLuong, double giaTien, int trangThai) {
+        this.idSP = idSP;
+        this.idMau = idMau;
+        this.idSize = idSize;
+        this.soLuong = soLuong;
+        this.giaTien = giaTien;
+        this.trangThai = trangThai;
+    }
+    
+    public ChiTietSanPham() {
+    }
+
 
     // Getters and Setters
     public int getIdCTSP() {
@@ -62,14 +69,6 @@ public class ChiTietSanPham {
         this.idSize = idSize;
     }
 
-    public int getIdLoai() {
-        return idLoai;
-    }
-
-    public void setIdLoai(int idLoai) {
-        this.idLoai = idLoai;
-    }
-
     public int getSoLuong() {
         return soLuong;
     }
@@ -86,22 +85,7 @@ public class ChiTietSanPham {
         this.giaTien = giaTien;
     }
 
-    public String getHinhAnh() {
-        return hinhAnh;
-    }
-
-    public void setHinhAnh(String hinhAnh) {
-        this.hinhAnh = hinhAnh;
-    }
-
-    public String getGhiChu() {
-        return ghiChu;
-    }
-
-    public void setGhiChu(String ghiChu) {
-        this.ghiChu = ghiChu;
-    }
-
+   
     public int getTrangThai() {
         return trangThai;
     }
@@ -114,8 +98,7 @@ public class ChiTietSanPham {
     @Override
     public String toString() {
         return "ChiTietSanPham [ID_CTSP=" + idCTSP + ", ID_SP=" + idSP + ", ID_Mau=" + idMau + ", ID_Size=" + idSize + 
-               ", ID_Loai=" + idLoai + ", SoLuong=" + soLuong + ", GiaTien=" + giaTien + ", HinhAnh=" + hinhAnh + 
-               ", GhiChu=" + ghiChu + ", TrangThai=" + trangThai + "]";
+               ", SoLuong=" + soLuong + ", GiaTien=" + giaTien + ", TrangThai=" + trangThai + "]";
     }
 }
 

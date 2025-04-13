@@ -5,6 +5,7 @@
 package viewModel;
 
 public class ChiTietSanPhamView {
+
     private int idCTSP;
     private String maGiay;
     private String tenGiay;
@@ -13,10 +14,9 @@ public class ChiTietSanPhamView {
     private String tenSize;
     private int soLuong;
     private double giaTien;
-    private String hinhAnh;
     private int trangThai;
 
-    public ChiTietSanPhamView(int idCTSP, String maGiay, String tenGiay, String tenLoai, String tenMau, String tenSize, int soLuong, double giaTien, String hinhAnh, int trangThai) {
+    public ChiTietSanPhamView(int idCTSP, String maGiay, String tenGiay, String tenLoai, String tenMau, String tenSize, int soLuong, double giaTien, int trangThai) {
         this.idCTSP = idCTSP;
         this.maGiay = maGiay;
         this.tenGiay = tenGiay;
@@ -25,9 +25,10 @@ public class ChiTietSanPhamView {
         this.tenSize = tenSize;
         this.soLuong = soLuong;
         this.giaTien = giaTien;
-        this.hinhAnh = hinhAnh;
         this.trangThai = trangThai;
     }
+
+    
 
     // Getters and Setters
     public int getIdCTSP() {
@@ -94,14 +95,6 @@ public class ChiTietSanPhamView {
         this.giaTien = giaTien;
     }
 
-    public String getHinhAnh() {
-        return hinhAnh;
-    }
-
-    public void setHinhAnh(String hinhAnh) {
-        this.hinhAnh = hinhAnh;
-    }
-
     public int getTrangThai() {
         return trangThai;
     }
@@ -113,18 +106,16 @@ public class ChiTietSanPhamView {
     // toString()
     @Override
     public String toString() {
-        return "ChiTietSanPhamViewModel{" +
-                "idCTSP=" + idCTSP +
-                ", maGiay='" + maGiay + '\'' +
-                ", tenGiay='" + tenGiay + '\'' +
-                ", tenLoai='" + tenLoai + '\'' +
-                ", tenMau='" + tenMau + '\'' +
-                ", tenSize='" + tenSize + '\'' +
-                ", soLuong=" + soLuong +
-                ", giaTien=" + giaTien +
-                ", hinhAnh='" + hinhAnh + '\'' +
-                ", trangThai=" + trangThai +
-                '}';
+        return "ChiTietSanPhamViewModel{"
+                + "idCTSP=" + idCTSP
+                + ", maGiay='" + maGiay + '\''
+                + ", tenGiay='" + tenGiay + '\''
+                + ", tenLoai='" + tenLoai + '\''
+                + ", tenMau='" + tenMau + '\''
+                + ", tenSize='" + tenSize + '\''
+                + ", soLuong=" + soLuong
+                + ", giaTien=" + giaTien
+                + ", trangThai=" + trangThai
+                + '}';
     }
 }
-

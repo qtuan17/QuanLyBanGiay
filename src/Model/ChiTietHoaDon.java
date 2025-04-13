@@ -11,15 +11,30 @@ public class ChiTietHoaDon {
     private int soLuong;
     private double donGia;
     private double thanhTien;
+    private int trangThai;
 
-    public ChiTietHoaDon(int idCTHD, int idHD, int idCTSP, int soLuong, double donGia, double thanhTien) {
+    public ChiTietHoaDon() {
+    }
+
+    public ChiTietHoaDon(int idCTHD, int idHD, int idCTSP, int soLuong, double donGia, double thanhTien, int trangThai) {
         this.idCTHD = idCTHD;
         this.idHD = idHD;
         this.idCTSP = idCTSP;
         this.soLuong = soLuong;
         this.donGia = donGia;
         this.thanhTien = thanhTien;
+        this.trangThai = trangThai;
     }
+
+    public int getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
+    }
+
+    
 
     // Getters and Setters
     public int getIdCTHD() {
@@ -74,7 +89,7 @@ public class ChiTietHoaDon {
     @Override
     public String toString() {
         return "ChiTietHoaDon [ID_CTHD=" + idCTHD + ", ID_HD=" + idHD + ", ID_CTSP=" + idCTSP + ", SoLuong=" + soLuong +
-               ", DonGia=" + donGia + ", ThanhTien=" + thanhTien + "]";
+               ", DonGia=" + donGia + ", ThanhTien=" + thanhTien + ", TrangThai=" + trangThai + "]";
     }
 }
 

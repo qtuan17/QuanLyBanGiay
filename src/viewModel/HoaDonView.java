@@ -10,23 +10,33 @@ public class HoaDonView {
     private int idHd;
     private String hoTenNV;
     private String hoTenKH;
+    private String sdt;
+    private String diaChi;
     private Date ngayTao;
     private double thanhTien;
-    private String pttt;      // Phương thức thanh toán
     private int trangThai;
 
     // Constructor
-    public HoaDonView(int idHd, String hoTenNV, String hoTenKH, Date ngayTao, double thanhTien, String pttt, int trangThai) {
+    public HoaDonView(int idHd, String hoTenNV, String hoTenKH, Date ngayTao, double thanhTien, int trangThai) {
         this.idHd = idHd;
         this.hoTenNV = hoTenNV;
         this.hoTenKH = hoTenKH;
         this.ngayTao = ngayTao;
         this.thanhTien = thanhTien;
-        this.pttt = pttt;
         this.trangThai = trangThai;
     }
 
-    // Getters and Setters
+    public HoaDonView(int idHd, String hoTenNV, String hoTenKH, String sdt, String diaChi, Date ngayTao, double thanhTien, int trangThai) {
+        this.idHd = idHd;
+        this.hoTenNV = hoTenNV;
+        this.hoTenKH = hoTenKH;
+        this.sdt = sdt;
+        this.diaChi = diaChi;
+        this.ngayTao = ngayTao;
+        this.thanhTien = thanhTien;
+        this.trangThai = trangThai;
+    }
+
     public int getIdHd() {
         return idHd;
     }
@@ -51,6 +61,22 @@ public class HoaDonView {
         this.hoTenKH = hoTenKH;
     }
 
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+
+    public String getDiaChi() {
+        return diaChi;
+    }
+
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
+    }
+
     public Date getNgayTao() {
         return ngayTao;
     }
@@ -66,14 +92,10 @@ public class HoaDonView {
     public void setThanhTien(double thanhTien) {
         this.thanhTien = thanhTien;
     }
+    
 
-    public String getPttt() {
-        return pttt;
-    }
+    
 
-    public void setPttt(String pttt) {
-        this.pttt = pttt;
-    }
 
     public int getTrangThai() {
         return trangThai;
@@ -99,9 +121,10 @@ public class HoaDonView {
                 "idHd=" + idHd +
                 ", hoTenNV='" + hoTenNV + '\'' +
                 ", hoTenKH='" + hoTenKH + '\'' +
+                ", sdt='" + sdt + '\'' +
+                ", diaChi='" + diaChi + '\'' +
                 ", ngayTao='" + ngayTao + '\'' +
                 ", thanhTien=" + thanhTien +
-                ", pttt='" + pttt + '\'' +
                 ", trangThai='" + trangThai + '\'' +
                 '}';
     }

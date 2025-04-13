@@ -34,13 +34,13 @@ public class NhanVienDao {
             while (resultSet.next()) {
                 NhanVien nhanVien = new NhanVien(
                         resultSet.getInt("ID_NV"),
-                        resultSet.getInt("ID_CV"),
                         resultSet.getString("HoTenNV"),
                         resultSet.getDate("NgaySinh"),
                         resultSet.getString("DiaChi"),
                         resultSet.getString("sdt"),
                         resultSet.getString("Password"),
-                        resultSet.getInt("TrangThai")
+                        resultSet.getInt("TrangThai"),
+                        resultSet.getBoolean("Role")
                 );
                 lstNV.add(nhanVien);
             }
@@ -52,25 +52,19 @@ public class NhanVienDao {
 
     public int create(NhanVien nhanVien) {
         int add = 0;
-        String sql = "INSERT INTO NhanVien (ID_NV, ID_CV, HoTenNV, NgaySinh, CCCD, DiaChi, Username, Password, TrangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO NhanVien (HoTenNV, NgaySinh, CCCD, DiaChi, Username, Password, TrangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
-
-            preparedStatement.setInt(1, nhanVien.getIdNV());               // ID_NV
-            preparedStatement.setInt(2, nhanVien.getIdCV());               // ID_CV
-            preparedStatement.setString(3, nhanVien.getHoTenNV());          // HoTenNV
-
-            // Kiểm tra và chuyển đổi NgaySinh sang java.sql.Date nếu cần
+            preparedStatement.setString(3, nhanVien.getHoTenNV());
             java.sql.Date sqlDate = nhanVien.getNgaySinh() != null
                     ? new java.sql.Date(nhanVien.getNgaySinh().getTime())
                     : null;
-            preparedStatement.setDate(4, sqlDate);                         // NgaySinh
-
-            preparedStatement.setString(5, nhanVien.getDiaChi());           // DiaChi
-            preparedStatement.setString(6, nhanVien.getSdt());         // Username
-            preparedStatement.setString(7, nhanVien.getPassword());         // Password
-            preparedStatement.setInt(8, nhanVien.getTrangThai());           // TrangThai
+            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.setString(5, nhanVien.getDiaChi());
+            preparedStatement.setString(6, nhanVien.getSdt());
+            preparedStatement.setString(7, nhanVien.getPassword());
+            preparedStatement.setInt(8, nhanVien.getTrangThai());
 
             add = preparedStatement.executeUpdate();
         } catch (SQLException e) {
