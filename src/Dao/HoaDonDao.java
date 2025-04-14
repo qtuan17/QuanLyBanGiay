@@ -4,6 +4,7 @@
  */
 package Dao;
 
+import Model.ChiTietHoaDon;
 import Model.HoaDon;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,46 @@ public class HoaDonDao {
             e.printStackTrace();
         }
         return hoaDons;
+    }
+
+    public List<ChiTietHoaDon> findCTHDByIDHD(int idHD) {
+        List<ChiTietHoaDon> chiTietHoaDons = new ArrayList<>();
+        String sql = """
+                    SELECT 
+                        cthd.ID_CTHD,
+                        cthd.ID_HD,
+                        cthd.ID_CTSP,
+                        sp.TenGiay AS TenSP,
+                        cthd.SoLuong,
+                        cthd.DonGia,
+                        cthd.ThanhTien,
+                        cthd.TrangThai
+                    FROM SHOSE_SHOP_VER2.dbo.ChiTietHoaDon cthd
+                    JOIN SHOSE_SHOP_VER2.dbo.ChiTietSanPham ctsp ON cthd.ID_CTSP = ctsp.ID_CTSP
+                    JOIN SHOSE_SHOP_VER2.dbo.SanPham sp ON ctsp.ID_SP = sp.ID_SP
+                    WHERE cthd.ID_HD = ?""";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            // Đặt giá trị cho tham số ID_HD
+            preparedStatement.setInt(1, idHD);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    ChiTietHoaDon chiTiet = new ChiTietHoaDon(
+                            resultSet.getInt("ID_CTHD"),
+                            resultSet.getInt("ID_HD"),
+                            resultSet.getInt("ID_CTSP"),
+                            resultSet.getString("TenSP"),
+                            resultSet.getInt("SoLuong"),
+                            resultSet.getDouble("DonGia"),
+                            resultSet.getDouble("ThanhTien"),
+                            resultSet.getInt("TrangThai")
+                    );
+                    chiTietHoaDons.add(chiTiet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return chiTietHoaDons;
     }
 
     public int insert(HoaDon hoaDon) {

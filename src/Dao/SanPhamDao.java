@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.sql.SQLException;
 
-
 /**
  *
  * @author tuanb
@@ -48,5 +47,40 @@ public class SanPhamDao {
         }
         return sanphams;
     }
-    
+
+    public int create(SanPham sp) {
+        int result = 0;
+        String sql = "INSERT INTO SanPham (MaGiay, TenGiay, ID_Loai, TrangThai) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, sp.getMaGiay());
+            ps.setString(2, sp.getTenGiay());
+            ps.setInt(3, sp.getIdLoai());
+            ps.setInt(4, sp.getTrangThai());
+            result = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public SanPham findByMaGiay(String maGiay) {
+        String sql = "SELECT * FROM SanPham WHERE MaGiay = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, maGiay);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                SanPham sp = new SanPham();
+                sp.setIdSP(rs.getInt("ID_SP"));
+                sp.setMaGiay(rs.getString("MaGiay"));
+                sp.setTenGiay(rs.getString("TenGiay"));
+                sp.setIdLoai(rs.getInt("ID_Loai"));
+                sp.setTrangThai(rs.getInt("TrangThai"));
+                return sp;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

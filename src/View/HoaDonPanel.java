@@ -4,10 +4,30 @@
  */
 package View;
 
+import Dao.HoaDonDao;
+import Model.ChiTietHoaDon;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import viewModel.HoaDonView;
 
 /**
  *
@@ -15,13 +35,152 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HoaDonPanel extends javax.swing.JPanel {
 
-  private DefaultTableModel model;
-    public HoaDonPanel(java.awt.Frame parent, boolean modal) throws Exception{
+    private DefaultTableModel model;
+    HoaDonDao hoaDonDao;
+    int index = -1;
+
+    public HoaDonPanel(java.awt.Frame parent, boolean modal) throws Exception {
         UIManager.setLookAndFeel(new FlatIntelliJLaf());
         initComponents();
+        hoaDonDao = new HoaDonDao();
+        fillTableHoaDon();
+
     }
 
-    
+    void fillTableHoaDon() {
+        DefaultTableModel modelHD = new DefaultTableModel();
+        modelHD = (DefaultTableModel) tblQLHD.getModel();
+        modelHD.setRowCount(0);
+        try {
+            List<HoaDonView> hoaDons = hoaDonDao.findAll();
+            if (hoaDons.isEmpty()) {
+
+            }
+            for (HoaDonView hoaDon : hoaDons) {
+                Object[] row = {
+                    hoaDon.getIdHd(),
+                    hoaDon.getHoTenNV(),
+                    hoaDon.getHoTenKH(),
+                    hoaDon.getSdt(),
+                    hoaDon.getDiaChi(),
+                    hoaDon.getThanhTien(),
+                    hoaDon.getNgayTao(),
+                    hoaDon.getTrangThai() == 1 ? "Chưa Thanh Toán" : "Đã Thanh Toán"
+                };
+                modelHD.addRow(row);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // Cửa sổ nổi chi tiết hóa đơn
+    void popup_ChiTietHoaDon() {
+        int selectedRow = tblQLHD.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int idHD = (int) tblQLHD.getValueAt(selectedRow, 0);
+        List<ChiTietHoaDon> listChiTiet = hoaDonDao.findCTHDByIDHD(idHD);
+
+        HoaDonView hoaDon = new HoaDonView(
+                idHD,
+                tblQLHD.getValueAt(selectedRow, 1).toString(),
+                tblQLHD.getValueAt(selectedRow, 2).toString(),
+                tblQLHD.getValueAt(selectedRow, 3).toString(),
+                tblQLHD.getValueAt(selectedRow, 4).toString(),
+                (java.sql.Date) tblQLHD.getValueAt(selectedRow, 6),
+                Double.valueOf(tblQLHD.getValueAt(selectedRow, 5).toString()),
+                tblQLHD.getValueAt(selectedRow, 7).toString().equals("Chưa Thanh Toán") ? 1 : 0
+        );
+
+        Window parent = SwingUtilities.getWindowAncestor(this);
+        JDialog dialog = new JDialog(parent, "Chi tiết hóa đơn", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // ==== Thông tin hóa đơn ====
+        JPanel pnlHoaDon = new JPanel(new GridBagLayout());
+        pnlHoaDon.setBorder(BorderFactory.createTitledBorder("Thông tin hóa đơn"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(6, 10, 6, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+
+        String[][] invoiceData = {
+            {"Mã hóa đơn:", String.valueOf(hoaDon.getIdHd())},
+            {"Nhân viên:", hoaDon.getHoTenNV()},
+            {"Khách hàng:", hoaDon.getHoTenKH()},
+            {"SĐT:", hoaDon.getSdt()},
+            {"Địa chỉ:", hoaDon.getDiaChi()},
+            {"Ngày tạo:", hoaDon.getNgayTao() != null ? hoaDon.getNgayTao().toString() : ""},
+            {"Thành tiền:", String.valueOf(hoaDon.getThanhTien())},
+            {"Trạng thái:", hoaDon.getTrangThai() == 1 ? "Chưa Thanh Toán" : "Đã Thanh Toán"}
+        };
+
+        for (int i = 0; i < invoiceData.length; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            pnlHoaDon.add(new JLabel(invoiceData[i][0]), gbc);
+
+            gbc.gridx = 1;
+            JLabel valueLabel = new JLabel(invoiceData[i][1]);
+            valueLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+            pnlHoaDon.add(valueLabel, gbc);
+        }
+        mainPanel.add(pnlHoaDon, BorderLayout.NORTH);
+
+        // ==== Bảng chi tiết hóa đơn ====
+        DefaultTableModel modelCTHD = new DefaultTableModel();
+        modelCTHD.addColumn("ID_CTSP");
+        modelCTHD.addColumn("Tên sản phẩm");
+        modelCTHD.addColumn("Số lượng");
+        modelCTHD.addColumn("Đơn giá");
+        modelCTHD.addColumn("Thành tiền");
+        modelCTHD.addColumn("Trạng thái");
+
+        for (ChiTietHoaDon ct : listChiTiet) {
+            modelCTHD.addRow(new Object[]{
+                ct.getIdCTSP(),
+                ct.getTenSP(),
+                ct.getSoLuong(),
+                ct.getDonGia(),
+                ct.getThanhTien(),
+                ct.getTrangThai() == 0 ? "Chưa Thanh Toán" : "Đã Thanh Toán"
+            });
+        }
+
+        JTable tblCTHD = new JTable(modelCTHD);
+        tblCTHD.setFillsViewportHeight(true);
+        tblCTHD.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tblCTHD.setRowHeight(24);
+        tblCTHD.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        tblCTHD.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+
+        JScrollPane scrollPane = new JScrollPane(tblCTHD);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết hóa đơn"));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // ==== Nút đóng ====
+        JPanel pnlButton = new JPanel();
+        JButton btnClose = new JButton("Đóng");
+        btnClose.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btnClose.addActionListener(e -> dialog.dispose());
+        pnlButton.add(btnClose);
+        mainPanel.add(pnlButton, BorderLayout.SOUTH);
+
+        dialog.add(mainPanel, BorderLayout.CENTER);
+        dialog.setPreferredSize(new Dimension(800, 600));
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,7 +192,7 @@ public class HoaDonPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblQLHD = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -42,7 +201,7 @@ public class HoaDonPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblQLHD.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -50,10 +209,15 @@ public class HoaDonPanel extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Hóa Đơn", "ID Nhân Viên", "ID Khách Hàng", "Tên Sản Phẩm", "null", "PTTT", "Ngày Tạo", "Trạng Thái"
+                "ID Hóa Đơn", "ID Nhân Viên", "ID Khách Hàng", "SDT", "Địa Chỉ", "Tổng Tiền ", "Ngày Tạo", "Trạng Thái"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tblQLHD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblQLHDMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblQLHD);
 
         jLabel1.setText("Tìm Kiếm :");
 
@@ -78,7 +242,7 @@ public class HoaDonPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 818, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -119,6 +283,10 @@ public class HoaDonPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbbTTHDActionPerformed
 
+    private void tblQLHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQLHDMouseClicked
+        popup_ChiTietHoaDon();
+    }//GEN-LAST:event_tblQLHDMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbbTTHD;
@@ -128,7 +296,7 @@ public class HoaDonPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblQLHD;
     // End of variables declaration//GEN-END:variables
 }

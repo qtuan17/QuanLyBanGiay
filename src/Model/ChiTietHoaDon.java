@@ -8,6 +8,7 @@ public class ChiTietHoaDon {
     private int idCTHD;
     private int idHD;
     private int idCTSP;
+    private String tenSP;
     private int soLuong;
     private double donGia;
     private double thanhTien;
@@ -16,27 +17,17 @@ public class ChiTietHoaDon {
     public ChiTietHoaDon() {
     }
 
-    public ChiTietHoaDon(int idCTHD, int idHD, int idCTSP, int soLuong, double donGia, double thanhTien, int trangThai) {
+    public ChiTietHoaDon(int idCTHD, int idHD, int idCTSP, String tenSP, int soLuong, double donGia, double thanhTien, int trangThai) {
         this.idCTHD = idCTHD;
         this.idHD = idHD;
         this.idCTSP = idCTSP;
+        this.tenSP = tenSP;
         this.soLuong = soLuong;
         this.donGia = donGia;
         this.thanhTien = thanhTien;
         this.trangThai = trangThai;
     }
 
-    public int getTrangThai() {
-        return trangThai;
-    }
-
-    public void setTrangThai(int trangThai) {
-        this.trangThai = trangThai;
-    }
-
-    
-
-    // Getters and Setters
     public int getIdCTHD() {
         return idCTHD;
     }
@@ -59,6 +50,14 @@ public class ChiTietHoaDon {
 
     public void setIdCTSP(int idCTSP) {
         this.idCTSP = idCTSP;
+    }
+
+    public String getTenSP() {
+        return tenSP;
+    }
+
+    public void setTenSP(String tenSP) {
+        this.tenSP = tenSP;
     }
 
     public int getSoLuong() {
@@ -84,6 +83,16 @@ public class ChiTietHoaDon {
     public void setThanhTien(double thanhTien) {
         this.thanhTien = thanhTien;
     }
+
+    public int getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
+    }
+
+    
 
     // toString() method to display information
     @Override

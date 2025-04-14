@@ -26,4 +26,27 @@ public class KhachHangValidator {
         }
         return khachHang;
     }
+    public static String validatorSDT(String sdt) {
+    // Kiểm tra độ dài
+    if (sdt.length() != 10 && sdt.length() != 11) {
+        JOptionPane.showMessageDialog(null, "Số điện thoại phải có 10 hoặc 11 chữ số", "Thông Báo Lỗi", JOptionPane.ERROR_MESSAGE);
+        return null;
+    }
+
+    // Kiểm tra có phải toàn số không
+    if (!sdt.matches("\\d+")) {
+        JOptionPane.showMessageDialog(null, "Số điện thoại chỉ được chứa chữ số", "Thông Báo Lỗi", JOptionPane.ERROR_MESSAGE);
+        return null;
+    }
+
+    // Kiểm tra đầu số (tuỳ chọn)
+    if (!sdt.startsWith("03") && !sdt.startsWith("05") && !sdt.startsWith("07") &&
+        !sdt.startsWith("08") && !sdt.startsWith("09")) {
+        JOptionPane.showMessageDialog(null, "Số điện thoại không đúng định dạng đầu số", "Thông Báo Lỗi", JOptionPane.ERROR_MESSAGE);
+        return null;
+    }
+
+    // Nếu qua hết thì hợp lệ
+    return sdt;
+}
 }

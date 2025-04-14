@@ -9,10 +9,10 @@ import Dao.SanPhamDao;
 import Model.Loai;
 import Model.SanPham;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,9 +23,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
 
     private DefaultTableModel model;
     int index = -1;
-    SanPhamDao sanPhamDao; 
+    SanPhamDao sanPhamDao;
     LoaiDao loaiDao;
-    
+
     public SanPhamJDialog(java.awt.Frame parent, boolean modal) throws Exception {
         super(parent, modal);
         initComponents();
@@ -36,20 +36,26 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         fillTableGiay();
         fillCbbLoai();
     }
+
     void fillTableGiay() {
         model = (DefaultTableModel) tblGiay.getModel();
         model.setRowCount(0);
         try {
             List<SanPham> sanPhams = sanPhamDao.findAll();
             if (sanPhams.isEmpty()) {
-                System.out.println("List Giay");
+                System.out.println("List Giay trống.");
             }
             for (SanPham sanPham : sanPhams) {
+                // Lấy tên loại tương ứng từ LoaiDao
+                Loai loai = loaiDao.findById(sanPham.getIdLoai());
+                String tenLoai = (loai != null) ? loai.getTenLoai() : "Không rõ";
+
                 Object[] row = {
                     sanPham.getIdSP(),
                     sanPham.getMaGiay(),
                     sanPham.getTenGiay(),
-                    sanPham.getIdLoai(),
+                    //                    sanPham.getIdLoai(),
+                    tenLoai, // ✅ Hiển thị tên loại thay vì ID
                     sanPham.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
                 };
                 model.addRow(row);
@@ -58,6 +64,7 @@ public class SanPhamJDialog extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
+
     public void fillCbbLoai() {
         DefaultComboBoxModel cbbLoai = (DefaultComboBoxModel) this.cbbLoai.getModel();
         cbbLoai.removeAllElements();
@@ -65,6 +72,70 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         for (Loai loai : loais) {
             if (loai.getTrangThai() == 1) {
                 cbbLoai.addElement(loai);
+            }
+        }
+    }
+
+    private void taoMoiSanPham() {
+        String maGiay = txtMaGiay.getText().trim();
+        String tenGiay = txtTenGiay.getText().trim();
+        Loai selectedLoai = (Loai) cbbLoai.getSelectedItem();
+
+        // Kiểm tra dữ liệu rỗng
+        if (maGiay.isEmpty() || tenGiay.isEmpty() || selectedLoai == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin sản phẩm.");
+            return;
+        }
+
+        // Kiểm tra trùng mã giày nếu cần
+        if (sanPhamDao.findByMaGiay(maGiay) != null) {
+            JOptionPane.showMessageDialog(this, "Mã giày đã tồn tại.");
+            return;
+        }
+
+        // Tạo đối tượng sản phẩm
+        SanPham sanPham = new SanPham();
+        sanPham.setMaGiay(maGiay);
+        sanPham.setTenGiay(tenGiay);
+        sanPham.setIdLoai(selectedLoai.getIdLoai());
+        sanPham.setTrangThai(1); // mặc định Tồn tại
+
+        // Thêm vào DB
+        int result = sanPhamDao.create(sanPham);
+        if (result > 0) {
+            JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
+            fillTableGiay();
+            clearFormSanPham();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại!");
+        }
+    }
+
+    private void clearFormSanPham() {
+        txtMaGiay.setText("");
+        txtTenGiay.setText("");
+        cbbLoai.setSelectedIndex(0);
+        index = -1;
+    }
+
+    private void setFormSanPham(int row) {
+        if (row != -1) {
+            txt_IDSanPham.setText(tblGiay.getValueAt(row, 0).toString());
+            txtMaGiay.setText(tblGiay.getValueAt(row, 1).toString());
+            txtTenGiay.setText(tblGiay.getValueAt(row, 2).toString());
+            // Lấy tên loại được hiển thị trên bảng (cột 3 chứa tên loại)
+            String tenLoaiTable = tblGiay.getValueAt(row, 3).toString();
+
+            // Lấy model của combobox chứa các đối tượng Loai
+            DefaultComboBoxModel cbbModel = (DefaultComboBoxModel) cbbLoai.getModel();
+            // Duyệt qua các phần tử trong combobox
+            for (int i = 0; i < cbbModel.getSize(); i++) {
+                Loai loai = (Loai) cbbModel.getElementAt(i);
+                // So sánh tên loại của đối tượng với tên lấy từ bảng
+                if (loai.getTenLoai().equals(tenLoaiTable)) {
+                    cbbLoai.setSelectedIndex(i);
+                    break;
+                }
             }
         }
     }
@@ -78,9 +149,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        txt_IDSanPham = new javax.swing.JTextField();
+        txtMaGiay = new javax.swing.JTextField();
+        txtTenGiay = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -96,14 +167,12 @@ public class SanPhamJDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTextField1.setEditable(false);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txt_IDSanPham.setEditable(false);
+        txt_IDSanPham.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txt_IDSanPhamActionPerformed(evt);
             }
         });
-
-        jTextField2.setEditable(false);
 
         jLabel1.setText("ID SẢN PHẨM");
 
@@ -124,6 +193,11 @@ public class SanPhamJDialog extends javax.swing.JDialog {
                 "ID ", "MÃ GIÀY", "TÊN GIÀY", "LOẠI GIÀY", "TRẠNG THÁI"
             }
         ));
+        tblGiay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblGiayMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblGiay);
 
         btnAddLoai.setForeground(new java.awt.Color(0, 153, 204));
@@ -162,9 +236,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
                             .addComponent(jLabel4))
                         .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField1)
+                            .addComponent(txtTenGiay)
+                            .addComponent(txtMaGiay)
+                            .addComponent(txt_IDSanPham)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(cbbLoai, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -191,15 +265,15 @@ public class SanPhamJDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(75, 75, 75)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_IDSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtMaGiay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTenGiay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -219,9 +293,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txt_IDSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_IDSanPhamActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txt_IDSanPhamActionPerformed
 
     private void btnAddLoaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddLoaiActionPerformed
         // TODO add your handling code here:
@@ -235,54 +309,16 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAddLoaiActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        taoMoiSanPham();
     }//GEN-LAST:event_jButton2ActionPerformed
+    private void tblGiayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGiayMouseClicked
+        index = tblGiay.getSelectedRow();
+        setFormSanPham(index);
+    }//GEN-LAST:event_tblGiayMouseClicked
 
     /**
      * @param args the command line arguments
      */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(SanPhamJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(SanPhamJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(SanPhamJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(SanPhamJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//    
-//        /* Create and display the dialog */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                try {
-//                    SanPhamJDialog dialog = new SanPhamJDialog(new javax.swing.JFrame(), true);
-//                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                        @Override
-//                        public void windowClosing(java.awt.event.WindowEvent e) {
-//                            System.exit(0);
-//                        }
-//                    });
-//                    dialog.setVisible(true);
-//                } catch (Exception ex) {
-//                    Logger.getLogger(SanPhamJDialog.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddLoai;
@@ -296,9 +332,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTable tblGiay;
+    private javax.swing.JTextField txtMaGiay;
+    private javax.swing.JTextField txtTenGiay;
+    private javax.swing.JTextField txt_IDSanPham;
     // End of variables declaration//GEN-END:variables
 }

@@ -24,16 +24,18 @@ public class ChiTietHoaDonDao {
         connection = util.DBContext.getConnection();
     }
 
+    
+
     public int insertChiTietHoaDon(ChiTietHoaDon chiTietHoaDon) {
         String sql = "INSERT INTO ChiTietHoaDon (ID_HD, ID_CTSP, SoLuong, DonGia, ThanhTien, TrangThai) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, chiTietHoaDon.getIdHD()); 
-            ps.setInt(2, chiTietHoaDon.getIdCTSP());                  
+            ps.setInt(1, chiTietHoaDon.getIdHD());
+            ps.setInt(2, chiTietHoaDon.getIdCTSP());
             ps.setInt(3, chiTietHoaDon.getSoLuong());
             ps.setDouble(4, chiTietHoaDon.getDonGia());
             ps.setDouble(5, chiTietHoaDon.getThanhTien());
-            ps.setInt(6, 1);                           
+            ps.setInt(6, 1);
             int rows = ps.executeUpdate();
             if (rows > 0) {
                 return rows;

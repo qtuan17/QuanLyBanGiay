@@ -5,11 +5,15 @@
 package Model;
 
 public class SanPham {
+
     private int idSP;
     private String maGiay;
     private String tenGiay;
     private int idLoai;
     private int trangThai;
+
+    public SanPham() {
+    }
 
     public SanPham(int idSP, String maGiay, String tenGiay, int idLoai, int trangThai) {
         this.idSP = idSP;
@@ -66,4 +70,3 @@ public class SanPham {
         return tenGiay;
     }
 }
-

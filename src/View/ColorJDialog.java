@@ -51,6 +51,7 @@ public class ColorJDialog extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
+
     private Mau getFormMau() {
         Mau mau = new Mau();
         if (index != -1) {
@@ -59,6 +60,7 @@ public class ColorJDialog extends javax.swing.JDialog {
         mau.setTenMau(txtTenMau.getText());
         return mau;
     }
+
     private void setFormMau(int index) {
         if (index != -1) {
             String idMau = tblColor.getValueAt(index, 0).toString();
@@ -67,6 +69,7 @@ public class ColorJDialog extends javax.swing.JDialog {
             txtTenMau.setText(tenMau);
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

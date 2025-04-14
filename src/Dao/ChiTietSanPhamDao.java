@@ -68,35 +68,52 @@ public class ChiTietSanPhamDao {
         return chiTietSanPhams;
     }
 
-    public boolean checkConHang(int idSanPham) {
-        String query = "SELECT * FROM ChiTietSua WHERE ID_CTSP = ? and SoLuong > 0";
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, idSanPham);
-            ResultSet result = pstmt.executeQuery();
-            while (result.next()) {
-                return true;
-            }
-            return false;
-        } catch (Exception e) {
-            System.out.println("looix check gio hang: " + e);
-            return false;
-        }
-    }
-
+//    public boolean checkConHang(int idSanPham) {
+//        String query = "SELECT * FROM ChiTietSua WHERE ID_CTSP = ? and SoLuong > 0";
+//        try {
+//            PreparedStatement pstmt = connection.prepareStatement(query);
+//            pstmt.setInt(1, idSanPham);
+//            ResultSet result = pstmt.executeQuery();
+//            while (result.next()) {
+//                return true;
+//            }
+//            return false;
+//        } catch (Exception e) {
+//            System.out.println("looix check gio hang: " + e);
+//            return false;
+//        }
+//    }
     public boolean addChiTietSanPham(ChiTietSanPham chiTietSanPham) {
-        String sql = "INSERT INTO ChiTietSanPham (ID_SP, ID_Mau, ID_Size, SoLuong, GiaTien, HinhAnh, GhiChu, TrangThai) VALUES\n"
-                + "(?, ?, ?, ?, ?, ?, ?, 1)";
         try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, chiTietSanPham.getIdSP());
-            preparedStatement.setInt(2, chiTietSanPham.getIdMau());
-            preparedStatement.setInt(3, chiTietSanPham.getIdSize());
-            preparedStatement.setInt(4, chiTietSanPham.getSoLuong());
-            preparedStatement.setDouble(5, chiTietSanPham.getGiaTien());
-            int row = preparedStatement.executeUpdate();
-            if (row > 0) {
-                return true;
+            // 1. Kiểm tra sản phẩm đã tồn tại chưa (theo ID_SP, ID_Mau, ID_Size)
+            String checkSql = "SELECT ID_CTSP, SoLuong FROM ChiTietSanPham WHERE ID_SP = ? AND ID_Mau = ? AND ID_Size = ?";
+            PreparedStatement checkStmt = connection.prepareStatement(checkSql);
+            checkStmt.setInt(1, chiTietSanPham.getIdSP());
+            checkStmt.setInt(2, chiTietSanPham.getIdMau());
+            checkStmt.setInt(3, chiTietSanPham.getIdSize());
+
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                // 2. Nếu tồn tại -> cập nhật số lượng
+                int idCTSP = rs.getInt("ID_CTSP");
+                int currentSoLuong = rs.getInt("SoLuong");
+                int newSoLuong = currentSoLuong + chiTietSanPham.getSoLuong();
+
+                chiTietSanPham.setIdCTSP(idCTSP);
+                chiTietSanPham.setSoLuong(newSoLuong);
+                return updateSoLuong(chiTietSanPham) > 0;
+            } else {
+                // 3. Nếu không tồn tại -> thêm mới
+                String insertSql = "INSERT INTO ChiTietSanPham (ID_SP, ID_Mau, ID_Size, SoLuong, GiaTien, TrangThai) VALUES (?, ?, ?, ?, ?, 1)";
+                PreparedStatement insertStmt = connection.prepareStatement(insertSql);
+                insertStmt.setInt(1, chiTietSanPham.getIdSP());
+                insertStmt.setInt(2, chiTietSanPham.getIdMau());
+                insertStmt.setInt(3, chiTietSanPham.getIdSize());
+                insertStmt.setInt(4, chiTietSanPham.getSoLuong());
+                insertStmt.setDouble(5, chiTietSanPham.getGiaTien());
+
+                return insertStmt.executeUpdate() > 0;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,4 +146,5 @@ public class ChiTietSanPhamDao {
         }
         return -1; // Trả về -1 nếu có lỗi hoặc không tìm thấy
     }
+
 }

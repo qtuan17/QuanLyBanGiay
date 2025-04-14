@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Date;
 
 /**
  *
@@ -52,26 +51,46 @@ public class NhanVienDao {
 
     public int create(NhanVien nhanVien) {
         int add = 0;
-        String sql = "INSERT INTO NhanVien (HoTenNV, NgaySinh, CCCD, DiaChi, Username, Password, TrangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO NhanVien (HoTenNV, NgaySinh, DiaChi, SDT, Password, TrangThai, Role) VALUES (?, ?, ?, ?, ?, 1, 0)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, nhanVien.getHoTenNV());
 
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(3, nhanVien.getHoTenNV());
-            java.sql.Date sqlDate = nhanVien.getNgaySinh() != null
-                    ? new java.sql.Date(nhanVien.getNgaySinh().getTime())
-                    : null;
-            preparedStatement.setDate(4, sqlDate);
-            preparedStatement.setString(5, nhanVien.getDiaChi());
-            preparedStatement.setString(6, nhanVien.getSdt());
-            preparedStatement.setString(7, nhanVien.getPassword());
-            preparedStatement.setInt(8, nhanVien.getTrangThai());
+            java.sql.Date sqlDate = null;
+            if (nhanVien.getNgaySinh() != null) {
+                sqlDate = new java.sql.Date(nhanVien.getNgaySinh().getTime());
+            }
+            preparedStatement.setDate(2, sqlDate);
+            preparedStatement.setString(3, nhanVien.getDiaChi());
+            preparedStatement.setString(4, nhanVien.getSdt());
+            preparedStatement.setString(5, nhanVien.getPassword());
 
             add = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return add;
+    }
+
+    public NhanVien findBySdt(String sdt) {
+        String sql = "SELECT * FROM NhanVien WHERE SDT = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, sdt);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                NhanVien nv = new NhanVien();
+                nv.setIdNV(rs.getInt("ID_NV"));
+                nv.setHoTenNV(rs.getString("HoTenNV"));
+                nv.setNgaySinh(rs.getDate("NgaySinh"));
+                nv.setDiaChi(rs.getString("DiaChi"));
+                nv.setSdt(rs.getString("SDT"));
+                nv.setPassword(rs.getString("Password"));
+                nv.setTrangThai(rs.getInt("TrangThai"));
+                return nv;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -20,29 +20,32 @@ public class KhachHangPanel extends javax.swing.JPanel {
     private DefaultTableModel model;
     KhachHangDao khachHangDao;
     int index = -1;
-    public KhachHangPanel(java.awt.Frame parent, boolean modal) throws Exception{
+
+    public KhachHangPanel(java.awt.Frame parent, boolean modal) throws Exception {
         UIManager.setLookAndFeel(new FlatIntelliJLaf());
         initComponents();
         khachHangDao = new KhachHangDao();
         fillTableKhachHang();
-        
+
     }
-    void fillTableKhachHang(){
+
+    void fillTableKhachHang() {
         DefaultTableModel modelNV = new DefaultTableModel();
         modelNV = (DefaultTableModel) tblKH.getModel();
         modelNV.setRowCount(0);
         try {
             List<KhachHang> khachHangs = khachHangDao.findAll();
             if (khachHangs.isEmpty()) {
-                
+
             }
             for (KhachHang khachHang : khachHangs) {
-                Object[] row ={
+                Object[] row = {
                     khachHang.getIdKH(),
                     khachHang.getHoTenKH(),
                     khachHang.getSdt(),
                     khachHang.getDiaChi(),
-                    khachHang.getTrangThai()
+                    khachHang.getTrangThai() == 1 ? "Tồn tại" : "Không tồn tại"
+
                 };
                 modelNV.addRow(row);
             }
@@ -86,7 +89,6 @@ public class KhachHangPanel extends javax.swing.JPanel {
         btnLoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/seach.png"))); // NOI18N
         btnLoc.setText("Lọc");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
