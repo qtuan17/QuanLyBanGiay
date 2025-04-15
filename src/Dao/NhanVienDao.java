@@ -93,4 +93,31 @@ public class NhanVienDao {
         return null;
     }
 
+    public int update(NhanVien nhanVien) {
+        int updated = 0;
+        String sql = "UPDATE NhanVien SET HoTenNV = ?, NgaySinh = ?, DiaChi = ?, SDT = ?, Password = ?, TrangThai = 1, Role = ? WHERE ID_NV = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, nhanVien.getHoTenNV());
+
+            java.sql.Date sqlDate = null;
+            if (nhanVien.getNgaySinh() != null) {
+                sqlDate = new java.sql.Date(nhanVien.getNgaySinh().getTime());
+            }
+            preparedStatement.setDate(2, sqlDate);
+
+            preparedStatement.setString(3, nhanVien.getDiaChi());
+            preparedStatement.setString(4, nhanVien.getSdt());
+            preparedStatement.setString(5, nhanVien.getPassword());
+//            preparedStatement.setInt(6, nhanVien.getTrangThai());
+            preparedStatement.setBoolean(6, nhanVien.isRole());
+
+            preparedStatement.setInt(7, nhanVien.getIdNV());
+
+            updated = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updated;
+    }
+
 }

@@ -28,11 +28,9 @@ public class NhanVien {
         this.role = role;
     }
 
-    
-
     public NhanVien() {
     }
-    
+
     // Getters and Setters
     public int getIdNV() {
         return idNV;
@@ -104,5 +102,6 @@ public class NhanVien {
         return "NhanVien [ID_NV=" + idNV + ", HoTenNV=" + hoTenNV + ", NgaySinh=" + ngaySinh
                 + ", DiaChi=" + diaChi + ", SDT=" + sdt + ", Password=" + password + ", TrangThai=" + trangThai
                 + ", Role=" + role + "]";
-    }
+    }    // toString() method to display information
+
 }

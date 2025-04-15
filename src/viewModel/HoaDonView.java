@@ -7,6 +7,7 @@ package viewModel;
 import java.util.Date;
 
 public class HoaDonView {
+
     private int idHd;
     private String hoTenNV;
     private String hoTenKH;
@@ -92,10 +93,6 @@ public class HoaDonView {
     public void setThanhTien(double thanhTien) {
         this.thanhTien = thanhTien;
     }
-    
-
-    
-
 
     public int getTrangThai() {
         return trangThai;
@@ -104,29 +101,30 @@ public class HoaDonView {
     public void setTrangThai(int trangThai) {
         this.trangThai = trangThai;
     }
-    public String trangThaiToString(int trangThai){
-        if(trangThai ==1){
+
+    public String trangThaiToString(int trangThai) {
+        if (trangThai == 0) {
             return "Chưa Thanh Toán";
-        }else if(trangThai == 2){
+        } else if (trangThai == 1) {
             return "Đã Thanh Toán";
-        }else if(trangThai == 3){
+        } else if (trangThai == 2) {
             return "Đã Huỷ";
-        }else{
+        } else {
             return "Đang Cập Nhật";
         }
     }
+
     @Override
     public String toString() {
-        return "HoaDonViewModel{" +
-                "idHd=" + idHd +
-                ", hoTenNV='" + hoTenNV + '\'' +
-                ", hoTenKH='" + hoTenKH + '\'' +
-                ", sdt='" + sdt + '\'' +
-                ", diaChi='" + diaChi + '\'' +
-                ", ngayTao='" + ngayTao + '\'' +
-                ", thanhTien=" + thanhTien +
-                ", trangThai='" + trangThai + '\'' +
-                '}';
+        return "HoaDonViewModel{"
+                + "idHd=" + idHd
+                + ", hoTenNV='" + hoTenNV + '\''
+                + ", hoTenKH='" + hoTenKH + '\''
+                + ", sdt='" + sdt + '\''
+                + ", diaChi='" + diaChi + '\''
+                + ", ngayTao='" + ngayTao + '\''
+                + ", thanhTien=" + thanhTien
+                + ", trangThai='" + trangThai + '\''
+                + '}';
     }
 }
-

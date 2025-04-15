@@ -5,20 +5,20 @@
 package Model;
 
 public class Mau {
+
     private int idMau;
     private String tenMau;
     private int trangThai;
 
     public Mau() {
     }
-    
 
     public Mau(int idMau, String tenMau, int trangThai) {
         this.idMau = idMau;
         this.tenMau = tenMau;
         this.trangThai = trangThai;
     }
-    
+
     // Getters and Setters
     public int getIdMau() {
         return idMau;
@@ -50,4 +50,3 @@ public class Mau {
         return tenMau;
     }
 }
-

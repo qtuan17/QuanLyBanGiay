@@ -15,10 +15,10 @@ import javax.swing.table.DefaultTableModel;
  */
 public class LoaiDialog extends javax.swing.JDialog {
 
-   private DefaultTableModel model;
-   int index = -1;
-   LoaiDao loaiDao;
-   
+    private DefaultTableModel model;
+    int index = -1;
+    LoaiDao loaiDao;
+
     public LoaiDialog(java.awt.Frame parent, boolean modal) throws Exception {
         super(parent, modal);
         initComponents();
@@ -27,7 +27,7 @@ public class LoaiDialog extends javax.swing.JDialog {
         loaiDao = new LoaiDao();
         fillTableLoai();
     }
-    
+
     void fillTableLoai() {
         model = (DefaultTableModel) tblLoai.getModel();
         model.setRowCount(0);
@@ -48,6 +48,7 @@ public class LoaiDialog extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
+
     private Loai getFormLoai() {
         Loai loai = new Loai();
         if (index != -1) {
@@ -56,6 +57,7 @@ public class LoaiDialog extends javax.swing.JDialog {
         loai.setTenLoai(txtTenLoai.getText());
         return loai;
     }
+
     private void setFormLoai(int index) {
         if (index != -1) {
             String idLoai = tblLoai.getValueAt(index, 0).toString();

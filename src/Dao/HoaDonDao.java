@@ -5,6 +5,7 @@
 package Dao;
 
 import Model.ChiTietHoaDon;
+import Model.ChiTietSanPham;
 import Model.HoaDon;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.sql.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import viewModel.HoaDonView;
+import viewModel.ThongKe;
 
 /**
  *
@@ -113,7 +117,7 @@ public class HoaDonDao {
             ps.setInt(2, hoaDon.getIdKH());
             ps.setDouble(3, 0);
             ps.setDate(4, Date.valueOf(LocalDate.now()));
-            ps.setInt(5, 1);
+            ps.setInt(5, 0); // 0 là chưa thanh toán
             int affectedRows = ps.executeUpdate();
             return affectedRows;
         } catch (SQLException e) {
@@ -135,4 +139,91 @@ public class HoaDonDao {
         }
         return 0;
     }
+
+    public boolean huyHoaDon(int idHD) {
+        String sql = "UPDATE HoaDon SET TrangThai = 2 WHERE ID_HD = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idHD);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void rollbackSanPhamTrongHoaDon(int idHD) {
+        String sql = "SELECT ID_CTSP, SoLuong FROM ChiTietHoaDon WHERE ID_HD = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idHD);
+            ResultSet rs = ps.executeQuery();
+
+            ChiTietSanPhamDao ctspDao = new ChiTietSanPhamDao();
+
+            while (rs.next()) {
+                int idCTSP = rs.getInt("ID_CTSP");
+                int soLuongTra = rs.getInt("SoLuong");
+
+                // Lấy lại số lượng hiện tại
+                int soLuongHienTai = ctspDao.getSoLuongById(idCTSP);
+                int soLuongMoi = soLuongHienTai + soLuongTra;
+
+                ChiTietSanPham ctsp = new ChiTietSanPham();
+                ctsp.setIdCTSP(idCTSP);
+                ctsp.setSoLuong(soLuongMoi);
+
+                ctspDao.updateSoLuongVaGiaTien(ctsp);
+
+                if (soLuongMoi > 0) {
+                    ctspDao.updateTrangThaiConHang(idCTSP);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ThongKe thongKeTheoKhoangNgay(LocalDate tuNgay, LocalDate denNgay) {
+        String sql = """
+        SELECT COUNT(*) AS SoLuongHD, SUM(ThanhTien) AS TongTien
+        FROM HoaDon
+        WHERE NgayTao >= ? AND NgayTao <= ? AND TrangThai = 1
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(tuNgay));
+            ps.setDate(2, java.sql.Date.valueOf(denNgay));
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int soHoaDon = rs.getInt("SoLuongHD");
+                double tongTien = rs.getDouble("TongTien");
+                return new ThongKe(soHoaDon, tongTien);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new ThongKe(0, 0);
+    }
+
+    public Map<String, Double> getDoanhThuTheoTungThangTrongNam() {
+        Map<String, Double> data = new LinkedHashMap<>();
+        String sql = """
+        SELECT FORMAT(NgayTao, 'MM/yyyy') AS Thang, SUM(ThanhTien) AS TongTien
+        FROM HoaDon
+        WHERE NgayTao >= DATEADD(MONTH, -11, GETDATE()) AND TrangThai = 1
+        GROUP BY FORMAT(NgayTao, 'MM/yyyy')
+        ORDER BY Thang
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                data.put(rs.getString("Thang"), rs.getDouble("TongTien"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
 }

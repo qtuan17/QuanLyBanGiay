@@ -63,6 +63,21 @@ public class SanPhamDao {
         return result;
     }
 
+    public int update(SanPham sp) {
+        String sql = "UPDATE SanPham SET MaGiay = ?, TenGiay = ?, ID_Loai = ?, TrangThai = ? WHERE ID_SP = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, sp.getMaGiay());
+            ps.setString(2, sp.getTenGiay());
+            ps.setInt(3, sp.getIdLoai());
+            ps.setInt(4, sp.getTrangThai());
+            ps.setInt(5, sp.getIdSP());
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     public SanPham findByMaGiay(String maGiay) {
         String sql = "SELECT * FROM SanPham WHERE MaGiay = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

@@ -6,7 +6,6 @@ package View;
 
 import Dao.LoginDao;
 import Model.NhanVien;
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,8 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -101,7 +98,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
 
         chkbNhoMatKhau.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         chkbNhoMatKhau.setForeground(new java.awt.Color(102, 102, 102));
-        chkbNhoMatKhau.setText("nhớ mật khẩu");
+        chkbNhoMatKhau.setText("Nhớ mật khẩu");
         chkbNhoMatKhau.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkbNhoMatKhauActionPerformed(evt);
@@ -277,7 +274,7 @@ public class DangNhapJFrame extends javax.swing.JFrame {
             ThongBao("Đăng nhập thành công!", "Thông báo", 1);
             try {
                 new TrangChuJFrame().setVisible(true);
-            } catch (UnsupportedLookAndFeelException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(DangNhapJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.dispose();

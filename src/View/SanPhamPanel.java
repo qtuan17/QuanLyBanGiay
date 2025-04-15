@@ -16,7 +16,6 @@ import Model.ChiTietHoaDon;
 import Model.ChiTietSanPham;
 import Model.HoaDon;
 import Model.KhachHang;
-import Model.Loai;
 import Model.Mau;
 import Model.NhanVien;
 import Model.SanPham;
@@ -24,8 +23,6 @@ import Model.Size;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -45,8 +42,6 @@ import java.util.regex.Pattern;
  */
 public class SanPhamPanel extends javax.swing.JPanel {
 
-    private DefaultTableModel model;
-    int index = -1;
     ChiTietSanPhamDao chiTietSanPhamDao;
     ChiTietHoaDonDao chiTietHoaDonDao;
     MauDao mauDao;
@@ -79,91 +74,119 @@ public class SanPhamPanel extends javax.swing.JPanel {
     }
 
     public void fillCbbColor() {
-        DefaultComboBoxModel cbbColor = (DefaultComboBoxModel) this.cbbColor.getModel();
-        cbbColor.removeAllElements();
+        DefaultComboBoxModel<Mau> cbbModel = (DefaultComboBoxModel<Mau>) cbbColor.getModel();
+        cbbModel.removeAllElements();
         List<Mau> colors = mauDao.findAll();
         for (Mau color : colors) {
             if (color.getTrangThai() == 1) {
-                cbbColor.addElement(color);
+                cbbModel.addElement(color);
             }
         }
     }
 
     public void fillCbbSize() {
-        DefaultComboBoxModel cbbSize = (DefaultComboBoxModel) this.cbbSize.getModel();
-        cbbSize.removeAllElements();
+        DefaultComboBoxModel<Size> cbbModel = (DefaultComboBoxModel<Size>) this.cbbSize.getModel();
+        cbbModel.removeAllElements();
         List<Size> sizes = sizeDao.findAll();
         for (Size size : sizes) {
             if (size.getTrangThai() == 1) {
-                cbbSize.addElement(size);
+                cbbModel.addElement(size);
             }
         }
     }
 
     public void fillCbbSanPham() {
-        DefaultComboBoxModel cbbSanPham = (DefaultComboBoxModel) this.cbbSanPham.getModel();
-        cbbSanPham.removeAllElements();
+        DefaultComboBoxModel<SanPham> cbbModel = (DefaultComboBoxModel<SanPham>) this.cbbSanPham.getModel();
+        cbbModel.removeAllElements();
         List<SanPham> sanphams = sanPhamDao.findAll();
         for (SanPham sanpham : sanphams) {
             if (sanpham.getTrangThai() == 1) {
-                cbbSanPham.addElement(sanpham);
+                cbbModel.addElement(sanpham);
             }
         }
     }
 
     void fillTaleChiTietSP() {
-        DefaultTableModel modelchitietsp_QLBH = new DefaultTableModel();
-        DefaultTableModel modelchitietsp_QLSP = new DefaultTableModel();
-        modelchitietsp_QLBH = (DefaultTableModel) tblSanPham.getModel();
-        modelchitietsp_QLSP = (DefaultTableModel) tblSP.getModel();
+        DefaultTableModel modelchitietsp_QLBH = (DefaultTableModel) tblSanPham.getModel(); // Bảng bán hàng
+        DefaultTableModel modelchitietsp_QLSP = (DefaultTableModel) tblSP.getModel();      // Bảng quản lý sản phẩm
         modelchitietsp_QLBH.setRowCount(0);
         modelchitietsp_QLSP.setRowCount(0);
+
         try {
             List<ChiTietSanPhamView> chiTietsanpham = chiTietSanPhamDao.findAll();
             if (chiTietsanpham.isEmpty()) {
-                System.out.println("chi tiet null");
+                System.out.println("Sản phẩm đang bị trống");
             }
+
+            // Hiển thị sản phẩm còn hàng cho bảng bán hàng
             for (ChiTietSanPhamView chiTietSanPham : chiTietsanpham) {
-                Object[] data_QLBH = {
-                    chiTietSanPham.getIdCTSP(),
-                    chiTietSanPham.getMaGiay(),
-                    chiTietSanPham.getTenGiay(),
-                    chiTietSanPham.getTenMau(),
-                    chiTietSanPham.getTenSize(),
-                    chiTietSanPham.getTenLoai(),
-                    chiTietSanPham.getSoLuong(),
-                    chiTietSanPham.getGiaTien(),
-                    chiTietSanPham.getTrangThai() == 1 ? "Còn Hàng" : "Hết Hàng",};
-                modelchitietsp_QLBH.addRow(data_QLBH);
-                Object[] data_QLSP = {
-                    chiTietSanPham.getIdCTSP(),
-                    chiTietSanPham.getMaGiay(),
-                    chiTietSanPham.getTenGiay(),
-                    chiTietSanPham.getTenMau(),
-                    chiTietSanPham.getTenSize(),
-                    chiTietSanPham.getTenLoai(),
-                    chiTietSanPham.getSoLuong(),
-                    chiTietSanPham.getGiaTien(),
-                    chiTietSanPham.getTrangThai(),
-                    chiTietSanPham.getTrangThai() == 1 ? "Còn Hàng" : "Hết Hàng",};
-                modelchitietsp_QLSP.addRow(data_QLSP);
+                if (chiTietSanPham.getTrangThai() == 1) {
+                    Object[] data_QLBH = {
+                        chiTietSanPham.getIdCTSP(),
+                        chiTietSanPham.getMaGiay(),
+                        chiTietSanPham.getTenGiay(),
+                        chiTietSanPham.getTenMau(),
+                        chiTietSanPham.getTenSize(),
+                        chiTietSanPham.getTenLoai(),
+                        chiTietSanPham.getSoLuong(),
+                        chiTietSanPham.getGiaTien(),
+                        "Còn Hàng"
+                    };
+                    modelchitietsp_QLBH.addRow(data_QLBH);
+                }
             }
+
+            // 👉 THÊM VÀO tblSP – sản phẩm còn hàng TRƯỚC
+            for (ChiTietSanPhamView chiTietSanPham : chiTietsanpham) {
+                if (chiTietSanPham.getTrangThai() == 1) {
+                    Object[] data_QLSP = {
+                        chiTietSanPham.getIdCTSP(),
+                        chiTietSanPham.getMaGiay(),
+                        chiTietSanPham.getTenGiay(),
+                        chiTietSanPham.getTenMau(),
+                        chiTietSanPham.getTenSize(),
+                        chiTietSanPham.getTenLoai(),
+                        chiTietSanPham.getSoLuong(),
+                        chiTietSanPham.getGiaTien(),
+                        "Còn Hàng" // Hiển thị chữ
+                    };
+                    modelchitietsp_QLSP.addRow(data_QLSP);
+                }
+            }
+
+            // 👉 THÊM VÀO tblSP – sản phẩm hết hàng SAU
+            for (ChiTietSanPhamView chiTietSanPham : chiTietsanpham) {
+                if (chiTietSanPham.getTrangThai() == 0) {
+                    Object[] data_QLSP = {
+                        chiTietSanPham.getIdCTSP(),
+                        chiTietSanPham.getMaGiay(),
+                        chiTietSanPham.getTenGiay(),
+                        chiTietSanPham.getTenMau(),
+                        chiTietSanPham.getTenSize(),
+                        chiTietSanPham.getTenLoai(),
+                        chiTietSanPham.getSoLuong(),
+                        chiTietSanPham.getGiaTien(),
+                        "Hết Hàng" // Hiển thị chữ
+                    };
+                    modelchitietsp_QLSP.addRow(data_QLSP);
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     void fillTaleHoaDon() {
-        DefaultTableModel modelhoadon = new DefaultTableModel();
-        modelhoadon = (DefaultTableModel) tblHoaDon.getModel();
+        DefaultTableModel modelhoadon = (DefaultTableModel) tblHoaDon.getModel();
         modelhoadon.setRowCount(0);
         try {
             List<HoaDonView> hoaDons = hoaDonDao.findAll();
             if (hoaDons.isEmpty()) {
-                System.out.println("chi tiet null");
+                System.out.println("Không có hóa đơn.");
             }
             for (HoaDonView hoaDon : hoaDons) {
-                if (hoaDon.getTrangThai() == 1) {
+                if (hoaDon.getTrangThai() == 0) { // 👉 Chỉ hiển thị hóa đơn đã thanh toán
                     Object[] row = {
                         hoaDon.getIdHd(),
                         hoaDon.getHoTenNV(),
@@ -176,7 +199,6 @@ public class SanPhamPanel extends javax.swing.JPanel {
                     };
                     modelhoadon.addRow(row);
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,7 +239,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
                     this.idKH = khachHangDao.create(khachHang);
                     if (this.idKH == -1) {
                         JOptionPane.showMessageDialog(null, "Đã có lỗi xảy ra vui lòng thử lại", "Thông Báo Lỗi", JOptionPane.ERROR_MESSAGE);
-                        reload();
+                        resetFormSauThanhToan();
                         return;
                     }
                 }
@@ -257,6 +279,28 @@ public class SanPhamPanel extends javax.swing.JPanel {
         }
     }
 
+    public void chonSanPham() {
+        int row = tblSanPham.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một sản phẩm.");
+            return;
+        }
+        ChiTietSanPhamView chiTietSanPhamView = new ChiTietSanPhamView(
+                (int) tblSanPham.getValueAt(row, 0),
+                tblSanPham.getValueAt(row, 1).toString(),
+                tblSanPham.getValueAt(row, 2).toString(),
+                tblSanPham.getValueAt(row, 3).toString(),
+                tblSanPham.getValueAt(row, 4).toString(),
+                tblSanPham.getValueAt(row, 5).toString(),
+                (int) tblSanPham.getValueAt(row, 6),
+                (double) tblSanPham.getValueAt(row, 7),
+                1
+        );
+        addGioHang(chiTietSanPhamView);
+        txtTongTienHang.setText(String.valueOf(tongTien()));
+        fillGioHang();
+    }
+
     void fillGioHang() {
         DefaultTableModel modelgiohang = new DefaultTableModel();
         modelgiohang = (DefaultTableModel) tblGioHang.getModel();
@@ -285,13 +329,12 @@ public class SanPhamPanel extends javax.swing.JPanel {
         return tongTien;
     }
 
-    ChiTietSanPham getFormCTSP() {
+    private ChiTietSanPham getFormCTSP() {
         SanPham sanPham = (SanPham) cbbSanPham.getSelectedItem();
         Mau mau = (Mau) cbbColor.getSelectedItem();
         Size size = (Size) cbbSize.getSelectedItem();
         int soLuong = Integer.parseInt(txtSoLuong.getText());
         double giaTien = Double.parseDouble(txtGiaTien.getText());
-//        String ghiChu = txtGhiChu.getText();
         ChiTietSanPham chiTietSanPham = new ChiTietSanPham(
                 sanPham.getIdSP(),
                 mau.getIdMau(),
@@ -300,6 +343,106 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 giaTien,
                 1);
         return chiTietSanPham;
+    }
+
+    private void themMoiSanPham() {
+        ChiTietSanPham chiTietSanPham = getFormCTSP();
+        if (chiTietSanPham == null) {
+            return;
+        }
+
+        ChiTietSanPham existed = chiTietSanPhamDao.findBySP_Mau_Size(
+                chiTietSanPham.getIdSP(),
+                chiTietSanPham.getIdMau(),
+                chiTietSanPham.getIdSize()
+        );
+
+        if (existed != null) {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Sản phẩm đã tồn tại. Bạn có muốn cập nhật số lượng mới không?",
+                    "Cập nhật sản phẩm",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                int soLuongHienTai = existed.getSoLuong();
+                int soLuongMoi = chiTietSanPham.getSoLuong();
+
+                if (soLuongMoi < soLuongHienTai) {
+                    JOptionPane.showMessageDialog(this,
+                            "Số lượng nhập mới phải lớn hơn số lượng hiện tại (" + soLuongHienTai + ")!",
+                            "Cảnh báo",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                chiTietSanPham.setIdCTSP(existed.getIdCTSP());
+
+                int result = chiTietSanPhamDao.updateSoLuongVaGiaTien(chiTietSanPham);
+                if (result > 0) {
+                    fillTaleChiTietSP();
+                    JOptionPane.showMessageDialog(this, "Cập nhật số lượng thành công!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
+                }
+            }
+        } else {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Sản phẩm chưa tồn tại. Bạn có muốn thêm mới không?",
+                    "Thêm sản phẩm mới",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean isAdd = chiTietSanPhamDao.addChiTietSanPham(chiTietSanPham);
+                if (isAdd) {
+                    fillTaleChiTietSP();
+                    JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại!");
+                }
+            }
+        }
+    }
+
+    private void getFormSanPham() {
+        int selectedRow = tblSP.getSelectedRow();
+        if (selectedRow < 0) {
+            return;
+        }
+        // Lấy dữ liệu từ bảng tblSP
+        int idCTSP = (int) tblSP.getValueAt(selectedRow, 0);
+        String tenGiay = tblSP.getValueAt(selectedRow, 2).toString();
+        String tenMau = tblSP.getValueAt(selectedRow, 3).toString();
+        String tenSize = tblSP.getValueAt(selectedRow, 4).toString();
+        int soLuong = (int) tblSP.getValueAt(selectedRow, 6);
+        double giaTien = (double) tblSP.getValueAt(selectedRow, 7);
+        // Đổ lên form
+        txt_idsp.setText(String.valueOf(idCTSP));
+        txtSoLuong.setText(String.valueOf(soLuong));
+        txtGiaTien.setText(String.valueOf(giaTien));
+        // Set comboBox Sản phẩm theo tên giày
+        for (int i = 0; i < cbbSanPham.getItemCount(); i++) {
+            SanPham sp = (SanPham) cbbSanPham.getItemAt(i);
+            if (sp.getTenGiay().equalsIgnoreCase(tenGiay)) {
+                cbbSanPham.setSelectedIndex(i);
+                break;
+            }
+        }
+        // Set comboBox Màu
+        for (int i = 0; i < cbbColor.getItemCount(); i++) {
+            Mau mau = (Mau) cbbColor.getItemAt(i);
+            if (mau.getTenMau().equalsIgnoreCase(tenMau)) {
+                cbbColor.setSelectedIndex(i);
+                break;
+            }
+        }
+        // Set comboBox Size
+        for (int i = 0; i < cbbSize.getItemCount(); i++) {
+            Size size = (Size) cbbSize.getItemAt(i);
+            if (size.getTenSize().equalsIgnoreCase(tenSize)) {
+                cbbSize.setSelectedIndex(i);
+                break;
+            }
+        }
     }
 
     public KhachHang getKhacHang() {
@@ -351,7 +494,6 @@ public class SanPhamPanel extends javax.swing.JPanel {
     }
 
     private void tienHanhThanhToan() {
-
         int choice = JOptionPane.showConfirmDialog(null, "Xác nhận Thanh Toán", "Thông Báo", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
             double tongTien = 0;
@@ -378,7 +520,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
                     chiTietHoaDon.setSoLuong(chiTietSanPhamDao.getSoLuongById(chiTietSanPhamView.getIdCTSP()));
                 }
                 chiTietHoaDon.setIdCTSP(chiTietSanPhamView.getIdCTSP());
-                chiTietSanPhamDao.updateSoLuong(chiTietSanPham);
+                chiTietSanPhamDao.updateSoLuongVaGiaTien(chiTietSanPham);
                 chiTietHoaDon.setDonGia(chiTietSanPhamView.getGiaTien());
                 chiTietHoaDon.setThanhTien(chiTietHoaDon.getSoLuong() * chiTietHoaDon.getDonGia());
                 int row = chiTietHoaDonDao.insertChiTietHoaDon(chiTietHoaDon);
@@ -391,10 +533,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
             int row = hoaDonDao.thanhToan(hoaDon);
             if (row > 0) {
                 JOptionPane.showMessageDialog(null, "Thanh Toán Thành Công", "Thông Báo", JOptionPane.QUESTION_MESSAGE);
-                fillTaleChiTietSP();
-                gioHang.clear();
-                fillGioHang();
-                fillTaleHoaDon();
+                resetFormSauThanhToan();
             }
         } else if (choice == JOptionPane.NO_OPTION) {
             return;
@@ -437,6 +576,39 @@ public class SanPhamPanel extends javax.swing.JPanel {
         }
     }
 
+    private void resetFormSauThanhToan() {
+        // Xóa thông tin form hóa đơn
+        txtIDHD.setText("");
+        txtTenNhanVien.setText("");
+        txtKhachHAng.setText("");
+        txtSDTKH.setText("");
+        txtDiaChiKH.setText("");
+        txtThanhTIen.setText("");
+        txtNgayTao.setText("");
+        txtTrangThai.setText("");
+        txtTongTienHang.setText("");
+
+        // Xóa giỏ hàng
+        gioHang.clear();
+        fillGioHang();
+
+        // Làm mới danh sách sản phẩm, hóa đơn
+        fillTaleChiTietSP();
+        fillTaleHoaDon();
+
+        // Làm mới combo box
+        fillCbbColor();
+        fillCbbSize();
+        fillCbbSanPham();
+
+        // Reset ID khách hàng
+        idKH = -1;
+
+        // Xóa bộ lọc tìm kiếm nếu có
+        txt_locsanpham.setText("");
+        ((TableRowSorter<?>) tblSanPham.getRowSorter()).setRowFilter(null);
+    }
+
     // Xóa dấu phụ để tìm kiếm sản phẩm
     private String removeDiacritics(String input) {
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
@@ -458,7 +630,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel8 = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txt_idsp = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
@@ -473,10 +645,11 @@ public class SanPhamPanel extends javax.swing.JPanel {
         btnAddColor = new javax.swing.JButton();
         btnAddSize = new javax.swing.JButton();
         btnAddSP = new javax.swing.JButton();
-        btnEditSP = new javax.swing.JButton();
         btnDeleteSP = new javax.swing.JButton();
         cbbSanPham = new javax.swing.JComboBox<>();
         btnThemSanPham = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jButton3 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
@@ -528,7 +701,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
 
         jLabel20.setText("ID Sản Phẩm");
 
-        jTextField1.setEnabled(false);
+        txt_idsp.setEnabled(false);
 
         jLabel21.setText("Tên Sản Phẩm");
 
@@ -536,14 +709,11 @@ public class SanPhamPanel extends javax.swing.JPanel {
 
         jLabel23.setText("Size");
 
-        cbbColor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cbbColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbbColorActionPerformed(evt);
             }
         });
-
-        cbbSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel25.setText("Số Lượng");
 
@@ -560,6 +730,11 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 "ID CTSP", "Mã Giày", "Tên Giày", "Màu", "Size", "Loại", "Số Lượng", "Giá Tiền", "Trạng Thái"
             }
         ));
+        tblSP.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSPMouseClicked(evt);
+            }
+        });
         jScrollPane7.setViewportView(tblSP);
 
         btnAddColor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/plus.png"))); // NOI18N
@@ -586,13 +761,8 @@ public class SanPhamPanel extends javax.swing.JPanel {
             }
         });
 
-        btnEditSP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/sua san pham.png"))); // NOI18N
-        btnEditSP.setText("Sửa");
-
         btnDeleteSP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/xoa san pham.png"))); // NOI18N
         btnDeleteSP.setText("Xoá");
-
-        cbbSanPham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnThemSanPham.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/plus.png"))); // NOI18N
         btnThemSanPham.setText("Thêm ");
@@ -620,7 +790,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jTextField1)
+                        .addComponent(txt_idsp)
                         .addComponent(txtGiaTien)
                         .addComponent(txtSoLuong)
                         .addComponent(cbbColor, 0, 330, Short.MAX_VALUE)
@@ -628,8 +798,6 @@ public class SanPhamPanel extends javax.swing.JPanel {
                         .addComponent(cbbSanPham, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addComponent(btnAddSP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnEditSP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnDeleteSP)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -646,7 +814,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 .addGap(24, 24, 24)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_idsp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
@@ -673,7 +841,6 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddSP)
-                    .addComponent(btnEditSP)
                     .addComponent(btnDeleteSP))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -681,6 +848,32 @@ public class SanPhamPanel extends javax.swing.JPanel {
         );
 
         jTabbedPane2.addTab("Danh Sách", jPanel8);
+
+        jButton3.setText("jButton3");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jButton3)
+                .addContainerGap(1760, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(64, 64, 64)
+                .addComponent(jButton3)
+                .addContainerGap(559, Short.MAX_VALUE))
+        );
+
+        jTabbedPane2.addTab("tab2", jPanel5);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1161,21 +1354,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
 
     private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked
         // TODO add your handling code here:
-        int row = tblSanPham.getSelectedRow();
-        ChiTietSanPhamView chiTietSanPhamView = new ChiTietSanPhamView(
-                (int) tblSanPham.getValueAt(row, 0),
-                tblSanPham.getValueAt(row, 1).toString(),
-                tblSanPham.getValueAt(row, 2).toString(),
-                tblSanPham.getValueAt(row, 3).toString(),
-                tblSanPham.getValueAt(row, 4).toString(),
-                tblSanPham.getValueAt(row, 5).toString(),
-                (int) tblSanPham.getValueAt(row, 6),
-                (double) tblSanPham.getValueAt(row, 7),
-                1
-        );
-        addGioHang(chiTietSanPhamView);
-        txtTongTienHang.setText(String.valueOf(tongTien()));
-        fillGioHang();
+        chonSanPham();
     }//GEN-LAST:event_tblSanPhamMouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -1238,15 +1417,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_cbbColorActionPerformed
 
     private void btnAddSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSPActionPerformed
-        // TODO add your handling code here:
-        ChiTietSanPham chiTietSanPham = getFormCTSP();
-        boolean isAdd = chiTietSanPhamDao.addChiTietSanPham(chiTietSanPham);
-        if (isAdd) {
-            fillTaleChiTietSP();
-            JOptionPane.showMessageDialog(this, "Thêm Sản Phẩm Thành Công");
-        } else {
-            JOptionPane.showMessageDialog(this, "Thêm Sản Phẩm Thất Bại");
-        }
+        themMoiSanPham();
 
     }//GEN-LAST:event_btnAddSPActionPerformed
 
@@ -1280,27 +1451,15 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private void btnTaoHoaDon1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaoHoaDon1ActionPerformed
         taoHoaDonTrong();
     }//GEN-LAST:event_btnTaoHoaDon1ActionPerformed
-    public void reload() {
-        txtIDHD.setText("");
-        txtTenNhanVien.setText("");
-        txtKhachHAng.setText("");
-        txtSDTKH.setText("");
-        txtDiaChiKH.setText("");
-        txtDiaChiKH.setEnabled(false);
-        txtKhachHAng.setEnabled(false);
-        this.idKH = -1;
-    }
+
     private void btnLamMoi1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoi1ActionPerformed
-        // TODO add your handling code here:
-        reload();
+        resetFormSauThanhToan();
     }//GEN-LAST:event_btnLamMoi1ActionPerformed
 
     private void btnTimKhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKhActionPerformed
-        // TODO add your handling code here:
         String sdt = Validator.KhachHangValidator.validatorSDT(txtSDTKH.getText().trim());
         if (sdt == null) {
             return;
-
         }
         KhachHang khachHang = khachHangDao.findKhachHangByPhone(sdt);
         if (khachHang == null) {
@@ -1312,9 +1471,15 @@ public class SanPhamPanel extends javax.swing.JPanel {
             txtDiaChiKH.setText(khachHang.getDiaChi());
             this.idKH = khachHang.getIdKH();
         }
-
-
     }//GEN-LAST:event_btnTimKhActionPerformed
+
+    private void tblSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSPMouseClicked
+        getFormSanPham();
+    }//GEN-LAST:event_tblSPMouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1322,7 +1487,6 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnAddSP;
     private javax.swing.JButton btnAddSize;
     private javax.swing.JButton btnDeleteSP;
-    private javax.swing.JButton btnEditSP;
     private javax.swing.JButton btnLamMoi1;
     private javax.swing.JButton btnLamMoiGioHang;
     private javax.swing.JButton btnSuaGioHang;
@@ -1330,11 +1494,12 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnThemSanPham;
     private javax.swing.JButton btnTimKh;
     private javax.swing.JButton btnXoaGioHang;
-    private javax.swing.JComboBox<String> cbbColor;
-    private javax.swing.JComboBox<String> cbbSanPham;
-    private javax.swing.JComboBox<String> cbbSize;
+    private javax.swing.JComboBox<Mau> cbbColor;
+    private javax.swing.JComboBox<SanPham> cbbSanPham;
+    private javax.swing.JComboBox<Size> cbbSize;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
@@ -1364,6 +1529,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane10;
@@ -1373,7 +1539,6 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblGioHang;
     private javax.swing.JTable tblHoaDon;
     private javax.swing.JTable tblSP;
@@ -1389,6 +1554,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtThanhTIen;
     private javax.swing.JTextField txtTongTienHang;
     private javax.swing.JTextField txtTrangThai;
+    private javax.swing.JTextField txt_idsp;
     private javax.swing.JTextField txt_locsanpham;
     // End of variables declaration//GEN-END:variables
 }

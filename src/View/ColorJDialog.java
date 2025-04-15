@@ -7,8 +7,7 @@ package View;
 import Dao.MauDao;
 import Model.Mau;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -52,15 +51,40 @@ public class ColorJDialog extends javax.swing.JDialog {
         }
     }
 
-    private Mau getFormMau() {
-        Mau mau = new Mau();
-        if (index != -1) {
-            mau.setIdMau(Integer.parseInt(txtIDMau.getText()));
+    // Phương thức kiểm tra dữ liệu nhập của form Màu
+    private boolean validateFormMau() {
+        // Lấy tên màu đã nhập và loại bỏ khoảng trắng thừa
+        String tenMau = txtTenMau.getText().trim();
+        if (tenMau.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên màu!");
+            return false;
         }
-        mau.setTenMau(txtTenMau.getText());
+        // Nếu bạn cần kiểm tra thêm các điều kiện khác (ví dụ: độ dài ký tự, định dạng,...)
+        return true;
+    }
+
+    // Lấy dữ liệu từ form và tạo đối tượng Mau (sau khi đã kiểm tra validate)
+    private Mau getFormMau() {
+        // Kiểm tra dữ liệu nhập, nếu không hợp lệ thì trả về null
+        if (!validateFormMau()) {
+            return null;
+        }
+        Mau mau = new Mau();
+        // Nếu đang chỉnh sửa sản phẩm (index != -1) thì set ID màu, có thể cần kiểm tra định dạng số
+        if (index != -1) {
+            try {
+                int idMau = Integer.parseInt(txtIDMau.getText().trim());
+                mau.setIdMau(idMau);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "ID màu không hợp lệ!");
+                return null;
+            }
+        }
+        mau.setTenMau(txtTenMau.getText().trim());
         return mau;
     }
 
+    // Phương thức hiển thị dữ liệu từ bảng vào form (không cần thay đổi để validate)
     private void setFormMau(int index) {
         if (index != -1) {
             String idMau = tblColor.getValueAt(index, 0).toString();
@@ -319,7 +343,6 @@ public class ColorJDialog extends javax.swing.JDialog {
 //            }
 //        });
 //    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKhoiphucMau;
     private javax.swing.JButton btnSuaMau;

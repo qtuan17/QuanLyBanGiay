@@ -116,30 +116,101 @@ public class NhanVienPanel extends javax.swing.JPanel {
     }
 
     private void taoMoiNhanVien() {
+        if (!validateFormNhanVien()) {
+            return;
+        }
+
         NhanVien nhanVien = getFormNhanVien();
         if (nhanVien == null) {
             return;
         }
-        // Kiểm tra trường trống
-        if (nhanVien.getHoTenNV().isEmpty() || nhanVien.getSdt().isEmpty() || nhanVien.getPassword().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin bắt buộc!");
-            return;
-        }
-        // Kiểm tra trùng SĐT / tài khoản
+
         NhanVien existing = nhanVienDao.findBySdt(nhanVien.getSdt());
         if (existing != null) {
             JOptionPane.showMessageDialog(this, "Số điện thoại/Tài khoản đã tồn tại!");
             return;
         }
-        // Thêm mới
+
         int addNhanVien = nhanVienDao.create(nhanVien);
         if (addNhanVien > 0) {
             JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
             fillTableNhanVien();
-            clearFormNhanVien(); // Reset form sau khi thêm
+            clearFormNhanVien();
         } else {
             JOptionPane.showMessageDialog(this, "Thêm thất bại!");
         }
+    }
+
+    private void suaNhanVien() {
+        if (!validateFormNhanVien()) {
+            return;
+        }
+
+        NhanVien nhanVien = getFormNhanVien();
+        if (nhanVien == null) {
+            return;
+        }
+
+        int result = nhanVienDao.update(nhanVien);
+        if (result > 0) {
+            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+            fillTableNhanVien();
+            clearFormNhanVien();
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
+        }
+    }
+
+    private boolean validateFormNhanVien() {
+        if (txtHoTen.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập họ tên nhân viên!");
+            txtHoTen.requestFocus();
+            return false;
+        }
+
+        if (txtNgaySinh.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập ngày sinh!");
+            txtNgaySinh.requestFocus();
+            return false;
+        }
+
+        if (txtDiaChi.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập địa chỉ!");
+            txtDiaChi.requestFocus();
+            return false;
+        }
+
+        if (txtTaiKhoan.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số điện thoại/tài khoản!");
+            txtTaiKhoan.requestFocus();
+            return false;
+        }
+
+        if (txtMatKhau.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
+            txtMatKhau.requestFocus();
+            return false;
+        }
+
+        if (txtMatKhau.getText().length() < 6) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu phải có ít nhất 6 ký tự!");
+            txtMatKhau.requestFocus();
+            return false;
+        }
+
+        // Kiểm tra định dạng ngày
+        String stringNgaySinh = txtNgaySinh.getText().trim();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(stringNgaySinh);
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(this, "Ngày sinh sai định dạng (yyyy-MM-dd)!");
+            txtNgaySinh.requestFocus();
+            return false;
+        }
+
+        return true;
     }
 
     private void clearFormNhanVien() {
@@ -271,6 +342,11 @@ public class NhanVienPanel extends javax.swing.JPanel {
         btnEditNV.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnEditNV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
         btnEditNV.setText("Sửa");
+        btnEditNV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditNVActionPerformed(evt);
+            }
+        });
 
         btnDeleteNV.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnDeleteNV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete.png"))); // NOI18N
@@ -534,6 +610,10 @@ public class NhanVienPanel extends javax.swing.JPanel {
         index = tblNV.getSelectedRow();
         setFormNhanVien(index);
     }//GEN-LAST:event_tblNVMouseClicked
+
+    private void btnEditNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditNVActionPerformed
+        suaNhanVien();
+    }//GEN-LAST:event_btnEditNVActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

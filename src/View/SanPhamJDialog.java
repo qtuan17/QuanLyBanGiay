@@ -9,7 +9,6 @@ import Dao.SanPhamDao;
 import Model.Loai;
 import Model.SanPham;
 import java.util.List;
-import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -66,17 +65,17 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     }
 
     public void fillCbbLoai() {
-        DefaultComboBoxModel cbbLoai = (DefaultComboBoxModel) this.cbbLoai.getModel();
-        cbbLoai.removeAllElements();
+        DefaultComboBoxModel<Loai> cbbLoaiModel = (DefaultComboBoxModel<Loai>) this.cbbLoai.getModel();
+        cbbLoaiModel.removeAllElements();
         List<Loai> loais = loaiDao.findAll();
         for (Loai loai : loais) {
             if (loai.getTrangThai() == 1) {
-                cbbLoai.addElement(loai);
+                cbbLoaiModel.addElement(loai);
             }
         }
     }
 
-    private void taoMoiSanPham() {
+    private void submitFormSanPham_TaoMoi() {
         String maGiay = txtMaGiay.getText().trim();
         String tenGiay = txtTenGiay.getText().trim();
         Loai selectedLoai = (Loai) cbbLoai.getSelectedItem();
@@ -87,18 +86,18 @@ public class SanPhamJDialog extends javax.swing.JDialog {
             return;
         }
 
-        // Kiểm tra trùng mã giày nếu cần
+        // Kiểm tra mã giày đã tồn tại
         if (sanPhamDao.findByMaGiay(maGiay) != null) {
-            JOptionPane.showMessageDialog(this, "Mã giày đã tồn tại.");
+            JOptionPane.showMessageDialog(this, "Mã giày đã tồn tại. Vui lòng chọn mã khác.");
             return;
         }
 
-        // Tạo đối tượng sản phẩm
+        // Tạo sản phẩm mới
         SanPham sanPham = new SanPham();
         sanPham.setMaGiay(maGiay);
         sanPham.setTenGiay(tenGiay);
         sanPham.setIdLoai(selectedLoai.getIdLoai());
-        sanPham.setTrangThai(1); // mặc định Tồn tại
+        sanPham.setTrangThai(1); // mặc định tồn tại
 
         // Thêm vào DB
         int result = sanPhamDao.create(sanPham);
@@ -109,6 +108,63 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại!");
         }
+    }
+
+    private void updateSanPham() {
+        String idStr = txt_IDSanPham.getText().trim();
+        String maGiay = txtMaGiay.getText().trim();
+        String tenGiay = txtTenGiay.getText().trim();
+        Loai selectedLoai = (Loai) cbbLoai.getSelectedItem();
+
+        // Kiểm tra dữ liệu rỗng
+        if (idStr.isEmpty() || maGiay.isEmpty() || tenGiay.isEmpty() || selectedLoai == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin sản phẩm.");
+            return;
+        }
+
+        int idSP;
+        try {
+            idSP = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID sản phẩm không hợp lệ.");
+            return;
+        }
+
+        // Kiểm tra trùng mã giày với sản phẩm khác
+        SanPham existed = sanPhamDao.findByMaGiay(maGiay);
+        if (existed != null && existed.getIdSP() != idSP) {
+            JOptionPane.showMessageDialog(this, "Mã giày đã tồn tại ở sản phẩm khác.");
+            return;
+        }
+
+        // Xác nhận cập nhật
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc muốn cập nhật sản phẩm này?",
+                "Xác nhận cập nhật",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Tạo đối tượng cập nhật
+        SanPham sanPham = new SanPham();
+        sanPham.setIdSP(idSP);
+        sanPham.setMaGiay(maGiay);
+        sanPham.setTenGiay(tenGiay);
+        sanPham.setIdLoai(selectedLoai.getIdLoai());
+        sanPham.setTrangThai(1); // giữ trạng thái tồn tại
+
+        // Thực hiện cập nhật
+        int result = sanPhamDao.update(sanPham);
+        if (result > 0) {
+            JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thành công!");
+            fillTableGiay();
+            clearFormSanPham();
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thất bại!");
+        }
+
     }
 
     private void clearFormSanPham() {
@@ -127,7 +183,7 @@ public class SanPhamJDialog extends javax.swing.JDialog {
             String tenLoaiTable = tblGiay.getValueAt(row, 3).toString();
 
             // Lấy model của combobox chứa các đối tượng Loai
-            DefaultComboBoxModel cbbModel = (DefaultComboBoxModel) cbbLoai.getModel();
+            DefaultComboBoxModel<Loai> cbbModel = (DefaultComboBoxModel<Loai>) cbbLoai.getModel();
             // Duyệt qua các phần tử trong combobox
             for (int i = 0; i < cbbModel.getSize(); i++) {
                 Loai loai = (Loai) cbbModel.getElementAt(i);
@@ -216,6 +272,11 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         });
 
         jButton3.setText("Sửa");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Xóa");
 
@@ -309,12 +370,16 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAddLoaiActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        taoMoiSanPham();
+        submitFormSanPham_TaoMoi();
     }//GEN-LAST:event_jButton2ActionPerformed
     private void tblGiayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGiayMouseClicked
         index = tblGiay.getSelectedRow();
         setFormSanPham(index);
     }//GEN-LAST:event_tblGiayMouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        updateSanPham();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -322,7 +387,7 @@ public class SanPhamJDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddLoai;
-    private javax.swing.JComboBox<String> cbbLoai;
+    private javax.swing.JComboBox<Loai> cbbLoai;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
