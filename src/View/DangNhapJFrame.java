@@ -10,59 +10,118 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import util.SessionLogin;
 
 /**
  *
  * @author tuanb
  */
-public class DangNhapJFrame extends javax.swing.JFrame {
+public class DangNhapJFrame extends JFrame {
 
-    LoginDao loginDao;
+    private final LoginDao loginDao;
 
-    public DangNhapJFrame() throws Exception {
-        initComponents();
-        setTitle("ĐĂNG NHẬP");
-        loginDao = new LoginDao();
-        File file = new File("luumk.txt");
-
-        String tendangnhap = "", matkhau = "";
-
-        FileReader fw;
+    public DangNhapJFrame() {
         try {
-            fw = new FileReader(file);
-            BufferedReader bw = new BufferedReader(fw);
-            try {
-                tendangnhap = bw.readLine();
-                matkhau = bw.readLine();
-                bw.close();
-            } catch (IOException ex) {
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("Không tìm thấy file lưu mật khẩu");
+            loginDao = new LoginDao();
+        } catch (Exception e) {
+            throw new RuntimeException("Không khởi tạo được LoginDao", e);
+        }
+        initComponents();
+        setTitle("Đăng Nhập");
+        setLocationRelativeTo(null);
+        loadSavedCredentials();
+    }
+    public static int quyen;
+    public static String ten, user;
+
+    private void loadSavedCredentials() {
+        File file = new File("luumk.txt");
+        if (!file.exists()) {
+            return;
         }
 
-        txtUserName.setText(tendangnhap);
-        txtPassword.setText(matkhau);
-        if (!tendangnhap.equals("")) {
-            chkbNhoMatKhau.setSelected(rootPaneCheckingEnabled);
-            System.out.println("Checked lưu mật khẩu");
-        } else {
-            System.out.println("đã bỏ checkbox lưu mật khẩu\n\n");
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String savedUser = br.readLine();
+            String savedPass = br.readLine();
+            if (savedUser != null) {
+                txtUserName.setText(savedUser);
+            }
+            if (savedPass != null) {
+                txtPassword.setText(savedPass);
+            }
+            chkbNhoMatKhau.setSelected(!savedUser.isEmpty());
+        } catch (IOException e) {
+            System.err.println("Không đọc được file lưu mật khẩu: " + e.getMessage());
         }
-        setLocationRelativeTo(null);
+    }
+
+    private void performLogin() {
+        String username = txtUserName.getText().trim();
+        String password = String.valueOf(txtPassword.getPassword()).trim();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showMessage("Tài khoản hoặc mật khẩu không được để trống", "Lỗi đăng nhập", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (username.length() < 5) {
+            showMessage("Tài khoản phải có ít nhất 5 ký tự", "Lỗi đăng nhập", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        handleRememberMe(username, password);
+
+        if (authenticate(username, password)) {
+            showMessage("Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            openMainFrame();
+        } else {
+            showMessage("Tài khoản hoặc mật khẩu không đúng", "Lỗi đăng nhập", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void handleRememberMe(String username, String password) {
+        File file = new File("luumk.txt");
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            if (chkbNhoMatKhau.isSelected()) {
+                bw.write(username);
+                bw.newLine();
+                bw.write(password);
+            }
+        } catch (IOException e) {
+            System.err.println("Lỗi khi lưu thông tin: " + e.getMessage());
+        }
+    }
+
+    private boolean authenticate(String username, String password) {
+        NhanVien nv = loginDao.Login(username, password);
+        if (nv != null) {
+            SessionLogin.setNhanVienLogin(nv);
+            quyen = nv.isRole() ? 1 : 0;
+            ten = nv.getHoTenNV();
+            user = username;
+            return true;
+        }
+        return false;
+    }
+
+    private void openMainFrame() {
+        try {
+            new TrangChuJFrame().setVisible(true);
+            dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showMessage("Không thể mở màn hình chính:\n" + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void showMessage(String msg, String title, int type) {
+        JOptionPane.showMessageDialog(this, msg, title, type);
     }
 
     @SuppressWarnings("unchecked")
@@ -218,128 +277,30 @@ public class DangNhapJFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    public static int quyen = 0;
-    public static String ten = "", user = "";
+
     private void chkbNhoMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkbNhoMatKhauActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_chkbNhoMatKhauActionPerformed
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
-
-        // Lấy thông tin người dùng
-        String strUsername = txtUserName.getText().trim();
-        String strPassword = String.valueOf(txtPassword.getPassword()).trim();
-
-// Kiểm tra trống
-        if (strUsername.isEmpty() || strPassword.isEmpty()) {
-            ThongBao("Tài khoản hoặc mật khẩu không được để trống", "Lỗi đăng nhập", 2);
-            return;
-        }
-
-// Kiểm tra độ dài tài khoản (ít nhất 5 ký tự)
-        if (strUsername.length() < 5) {
-            ThongBao("Tài khoản phải có ít nhất 5 ký tự", "Lỗi đăng nhập", 2);
-            return;
-        }
-
-        String luumk = "", luutdn = "";
-        if (chkbNhoMatKhau.isSelected()) {
-            luutdn = strUsername;
-            luumk = strPassword;
-            System.out.println("Lưu mật khẩu");
-        } else {
-            luutdn = "";
-            luumk = "";
-            System.out.println("Không lưu mật khẩu");
-        }
-
-        try {
-            File file = new File("luumk.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(luutdn + "\n" + luumk);
-            bw.close();
-            if (chkbNhoMatKhau.isSelected()) {
-                System.out.println("Lưu phiên đăng nhập thành công");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (KiemTra(strUsername, strPassword)) {
-            // Thông báo đăng nhập thành công
-            ThongBao("Đăng nhập thành công!", "Thông báo", 1);
-            try {
-                new TrangChuJFrame().setVisible(true);
-            } catch (Exception ex) {
-                Logger.getLogger(DangNhapJFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            this.dispose();
-        } else {
-            ThongBao("Bạn nhập sai tài khoản hoặc mật khẩu", "Lỗi đăng nhập", 2);
-        }
-
-    }
-
-    private boolean KiemTra(String sdt, String mk) {
-        boolean kq = false;
-        NhanVien nhanVien = loginDao.Login(sdt, mk);
-        if (nhanVien != null) {
-            SessionLogin.setNhanVienLogin(nhanVien);
-            kq = true;
-        }
-        return kq;
+        performLogin();
     }//GEN-LAST:event_btnDangNhapActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        // TODO add your handling code here:
         txtUserName.setText("");
         txtPassword.setText("");
-
         chkbNhoMatKhau.setSelected(true);
     }//GEN-LAST:event_btnResetActionPerformed
-    private boolean KiemTraChuaChuVaSo(String chuoiCanKiemTra) {
-        boolean ketQua = false;
-        Pattern p = Pattern.compile(".*[a-zA-Z].*");
-        Matcher m = p.matcher(chuoiCanKiemTra);
-        if (!(chuoiCanKiemTra == chuoiCanKiemTra.toLowerCase())) {
-            ketQua = m.find();
-        }
-        return ketQua;
-    }
-
-    public static void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
-        JOptionPane.showMessageDialog(new JFrame(), noiDungThongBao,
-                tieuDeThongBao, icon);
-    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             UIManager.setLookAndFeel(new FlatIntelliJLaf());
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                    System.out.println(info.getName());
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(DangNhapJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {

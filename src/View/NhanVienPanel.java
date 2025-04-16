@@ -33,26 +33,20 @@ public class NhanVienPanel extends javax.swing.JPanel {
     }
 
     void fillTableNhanVien() {
-        DefaultTableModel modelNV = new DefaultTableModel();
-        modelNV = (DefaultTableModel) tblNV.getModel();
+        DefaultTableModel modelNV = (DefaultTableModel) tblNV.getModel();
         modelNV.setRowCount(0);
         try {
-            List<NhanVien> nhanViens = nhanVienDao.findAll();
-            if (nhanViens.isEmpty()) {
-                System.out.println("Không có nhân viên nào.");
-            }
-            for (NhanVien nhanVien : nhanViens) {
-                Object[] row = {
-                    nhanVien.getIdNV(),
-                    nhanVien.getHoTenNV(),
-                    nhanVien.getNgaySinh(),
-                    nhanVien.getDiaChi(),
-                    nhanVien.getSdt(),
-                    nhanVien.getPassword(),
-                    // Toán tử 3 ngôi để hiển thị trạng thái
-                    nhanVien.getTrangThai() == 1 ? "Đang làm việc" : "Đã nghỉ"
-                };
-                modelNV.addRow(row);
+            List<NhanVien> nhanViens = nhanVienDao.findAllNhanVien();
+            for (NhanVien nv : nhanViens) {
+                modelNV.addRow(new Object[]{
+                    nv.getIdNV(),
+                    nv.getHoTenNV(),
+                    nv.getNgaySinh(),
+                    nv.getDiaChi(),
+                    nv.getSdt(),
+                    nv.getPassword(),
+                    nv.getTrangThai() == 1 ? "Đang làm việc" : "Đã nghỉ"
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,35 +55,27 @@ public class NhanVienPanel extends javax.swing.JPanel {
 
     private NhanVien getFormNhanVien() {
         try {
-            // Tạo đối tượng NhanVien mới
-            NhanVien nhanVien = new NhanVien();
-
-            // Nếu index không phải -1, gán ID từ txtIDNV
+            NhanVien nv = new NhanVien();
             if (index != -1) {
-                nhanVien.setIdNV(Integer.parseInt(txtID.getText()));
+                nv.setIdNV(Integer.parseInt(txtID.getText().trim()));
             }
+            nv.setHoTenNV(txtHoTen.getText().trim());
 
-            // Gán họ tên
-            nhanVien.setHoTenNV(txtHoTen.getText());
-
-            // Xử lý ngày sinh (giả sử txtNgaySinh là JTextField và nhập theo định dạng yyyy-MM-dd)
-            String stringNgaySinh = txtNgaySinh.getText();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            dateFormat.setLenient(false); // Đảm bảo ngày nhập đúng định dạng
+            String strNgaySinh = txtNgaySinh.getText().trim();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);
             try {
-                Date ngaysinh = dateFormat.parse(stringNgaySinh);
-                java.sql.Date sqlDate = new java.sql.Date(ngaysinh.getTime());
-                nhanVien.setNgaySinh(sqlDate);
+                Date parsed = sdf.parse(strNgaySinh);
+                nv.setNgaySinh(new java.sql.Date(parsed.getTime()));
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(this, "Ngày sinh sai định dạng (yyyy-MM-dd)");
                 return null;
             }
-            // Gán các giá trị khác từ form
-            nhanVien.setDiaChi(txtDiaChi.getText());
-            nhanVien.setSdt(txtTaiKhoan.getText());
-            nhanVien.setPassword(txtMatKhau.getText());
 
-            return nhanVien;
+            nv.setDiaChi(txtDiaChi.getText().trim());
+            nv.setSdt(txtTaiKhoan.getText().trim());
+            nv.setPassword(txtMatKhau.getText());
+            return nv;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi lấy thông tin nhân viên.");
             e.printStackTrace();
@@ -99,19 +85,12 @@ public class NhanVienPanel extends javax.swing.JPanel {
 
     private void setFormNhanVien(int index) {
         if (index != -1) {
-            String id = tblNV.getValueAt(index, 0).toString();
-            String hoTen = tblNV.getValueAt(index, 1).toString();
-            String ngaySinh = tblNV.getValueAt(index, 2).toString();
-            String diaChi = tblNV.getValueAt(index, 3).toString();
-            String taiKhoan = tblNV.getValueAt(index, 4).toString();
-            String matKhau = tblNV.getValueAt(index, 5).toString();
-            // Gán vào form
-            txtID.setText(id);
-            txtHoTen.setText(hoTen);
-            txtNgaySinh.setText(ngaySinh);
-            txtDiaChi.setText(diaChi);
-            txtTaiKhoan.setText(taiKhoan);
-            txtMatKhau.setText(matKhau);
+            txtID.setText(tblNV.getValueAt(index, 0).toString());
+            txtHoTen.setText(tblNV.getValueAt(index, 1).toString());
+            txtNgaySinh.setText(tblNV.getValueAt(index, 2).toString());
+            txtDiaChi.setText(tblNV.getValueAt(index, 3).toString());
+            txtTaiKhoan.setText(tblNV.getValueAt(index, 4).toString());
+            txtMatKhau.setText(tblNV.getValueAt(index, 5).toString());
         }
     }
 
@@ -120,19 +99,18 @@ public class NhanVienPanel extends javax.swing.JPanel {
             return;
         }
 
-        NhanVien nhanVien = getFormNhanVien();
-        if (nhanVien == null) {
+        NhanVien nv = getFormNhanVien();
+        if (nv == null) {
             return;
         }
 
-        NhanVien existing = nhanVienDao.findBySdt(nhanVien.getSdt());
-        if (existing != null) {
+        if (nhanVienDao.findBySdt(nv.getSdt()) != null) {
             JOptionPane.showMessageDialog(this, "Số điện thoại/Tài khoản đã tồn tại!");
             return;
         }
 
-        int addNhanVien = nhanVienDao.create(nhanVien);
-        if (addNhanVien > 0) {
+        int result = nhanVienDao.create(nv);
+        if (result > 0) {
             JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
             fillTableNhanVien();
             clearFormNhanVien();
@@ -146,12 +124,12 @@ public class NhanVienPanel extends javax.swing.JPanel {
             return;
         }
 
-        NhanVien nhanVien = getFormNhanVien();
-        if (nhanVien == null) {
+        NhanVien nv = getFormNhanVien();
+        if (nv == null) {
             return;
         }
 
-        int result = nhanVienDao.update(nhanVien);
+        int result = nhanVienDao.update(nv);
         if (result > 0) {
             JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
             fillTableNhanVien();
@@ -186,24 +164,24 @@ public class NhanVienPanel extends javax.swing.JPanel {
             return false;
         }
 
-        if (txtMatKhau.getText().trim().isEmpty()) {
+        String password = txtMatKhau.getText().trim();
+        if (password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
             txtMatKhau.requestFocus();
             return false;
         }
 
-        if (txtMatKhau.getText().length() < 6) {
+        if (password.length() < 6) {
             JOptionPane.showMessageDialog(this, "Mật khẩu phải có ít nhất 6 ký tự!");
             txtMatKhau.requestFocus();
             return false;
         }
 
-        // Kiểm tra định dạng ngày
-        String stringNgaySinh = txtNgaySinh.getText().trim();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false);
+        String strNgaySinh = txtNgaySinh.getText().trim();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false);
         try {
-            dateFormat.parse(stringNgaySinh);
+            sdf.parse(strNgaySinh);
         } catch (ParseException e) {
             JOptionPane.showMessageDialog(this, "Ngày sinh sai định dạng (yyyy-MM-dd)!");
             txtNgaySinh.requestFocus();

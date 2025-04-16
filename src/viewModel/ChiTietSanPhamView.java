@@ -28,9 +28,6 @@ public class ChiTietSanPhamView {
         this.trangThai = trangThai;
     }
 
-    
-
-    // Getters and Setters
     public int getIdCTSP() {
         return idCTSP;
     }
@@ -103,7 +100,6 @@ public class ChiTietSanPhamView {
         this.trangThai = trangThai;
     }
 
-    // toString()
     @Override
     public String toString() {
         return "ChiTietSanPhamViewModel{"

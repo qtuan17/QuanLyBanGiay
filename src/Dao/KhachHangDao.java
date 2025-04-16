@@ -27,6 +27,7 @@ public class KhachHangDao {
     }
 
     public List<KhachHang> findAll() {
+        System.out.println("→ Gọi phương thức: findAll() - Lấy danh sách toàn bộ khách hàng");
         List<KhachHang> lstNV = new ArrayList<>();
         String sql = "SELECT * FROM KhachHang";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -47,6 +48,7 @@ public class KhachHangDao {
     }
 
     public int create(KhachHang khachHang) {
+        System.out.println("→ Gọi phương thức: create() - Thêm khách hàng mới: " + khachHang.getHoTenKH());
         int generatedId = -1;
         String sql = "INSERT INTO KhachHang (HoTenKH, SDT, DiaChi, TrangThai) OUTPUT inserted.ID_KH VALUES (?,?,?,?)";
         try {
@@ -67,9 +69,9 @@ public class KhachHangDao {
     }
 
     public KhachHang findKhachHangByPhone(String sdt) {
+        System.out.println("→ Gọi phương thức: findKhachHangByPhone() - Tìm khách theo SDT: " + sdt);
         String sql = "SELECT * FROM KhachHang WHERE SDT = ?";
-        try (
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, sdt);
             ResultSet resultSet = preparedStatement.executeQuery();
 

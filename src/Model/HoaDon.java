@@ -4,9 +4,8 @@
  */
 package Model;
 
-
-
 public class HoaDon {
+
     private int idHD;
     private int idNV;
     private int idKH;
@@ -16,7 +15,6 @@ public class HoaDon {
 
     public HoaDon() {
     }
-    
 
     public HoaDon(int idHD, int idNV, int idKH, String tenSP, double giaTien, double thanhTien, String ngayTao, int trangThai) {
         this.idHD = idHD;
@@ -68,7 +66,7 @@ public class HoaDon {
         this.thanhTien = thanhTien;
     }
 
-        public String getNgayTao() {
+    public String getNgayTao() {
         return ngayTao;
     }
 
@@ -90,5 +88,3 @@ public class HoaDon {
         return "HoaDon [ID_HD=" + idHD + ", ID_NV=" + idNV + ", ID_KH=" + idKH + ", ThanhTien=" + thanhTien + ", NgayTao=" + ngayTao + ", TrangThai=" + trangThai + "]";
     }
 }
-
-

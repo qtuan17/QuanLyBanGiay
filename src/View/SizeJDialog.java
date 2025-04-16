@@ -7,7 +7,6 @@ package View;
 import Dao.SizeDao;
 import Model.Size;
 import java.util.List;
-import javax.print.attribute.standard.Sides;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,9 +15,10 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SizeJDialog extends javax.swing.JDialog {
 
-  private DefaultTableModel model;
-  int index = -1;
+    private DefaultTableModel model;
+    int index = -1;
     SizeDao sizeDao;
+
     public SizeJDialog(java.awt.Frame parent, boolean modal) throws Exception {
         super(parent, modal);
         initComponents();
@@ -32,7 +32,7 @@ public class SizeJDialog extends javax.swing.JDialog {
         model = (DefaultTableModel) tblBangSize.getModel();
         model.setRowCount(0);
         try {
-            List<Size> sizes = sizeDao.findAll();
+            List<Size> sizes = sizeDao.findAllSize();
             if (sizes.isEmpty()) {
                 System.out.println("List Size NUll");
             }
@@ -48,6 +48,7 @@ public class SizeJDialog extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
+
     private Size getFormSize() {
         Size size = new Size();
         if (index != -1) {
@@ -56,6 +57,7 @@ public class SizeJDialog extends javax.swing.JDialog {
         size.setTenSize(txtTenSize.getText());
         return size;
     }
+
     private void setFormSize(int index) {
         if (index != -1) {
             String idSize = tblBangSize.getValueAt(index, 0).toString();
@@ -225,8 +227,8 @@ public class SizeJDialog extends javax.swing.JDialog {
 
     private void tblBangSizeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBangSizeMouseClicked
         // TODO add your handling code here:
-           index = tblBangSize.getSelectedRow();
-        setFormSize(index); 
+        index = tblBangSize.getSelectedRow();
+        setFormSize(index);
     }//GEN-LAST:event_tblBangSizeMouseClicked
 
     private void btnXoaSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaSizeActionPerformed

@@ -23,7 +23,7 @@ public class LoaiDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setTitle("Bảng Loại");
-        this.setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
         loaiDao = new LoaiDao();
         fillTableLoai();
     }
@@ -32,17 +32,13 @@ public class LoaiDialog extends javax.swing.JDialog {
         model = (DefaultTableModel) tblLoai.getModel();
         model.setRowCount(0);
         try {
-            List<Loai> loais = loaiDao.findAll();
-            if (loais.isEmpty()) {
-                System.out.println("List loai NUll");
-            }
+            List<Loai> loais = loaiDao.findAllLoai();
             for (Loai loai : loais) {
-                Object[] row = {
+                model.addRow(new Object[]{
                     loai.getIdLoai(),
                     loai.getTenLoai(),
                     loai.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
-                };
-                model.addRow(row);
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,19 +48,16 @@ public class LoaiDialog extends javax.swing.JDialog {
     private Loai getFormLoai() {
         Loai loai = new Loai();
         if (index != -1) {
-            loai.setIdLoai(Integer.parseInt(txtIDLoai.getText()));
+            loai.setIdLoai(Integer.parseInt(txtIDLoai.getText().trim()));
         }
-        loai.setTenLoai(txtTenLoai.getText());
+        loai.setTenLoai(txtTenLoai.getText().trim());
         return loai;
     }
 
     private void setFormLoai(int index) {
         if (index != -1) {
-            String idLoai = tblLoai.getValueAt(index, 0).toString();
-            String tenLoai = tblLoai.getValueAt(index, 1).toString();
-
-            txtIDLoai.setText(idLoai);
-            txtTenLoai.setText(tenLoai);
+            txtIDLoai.setText(tblLoai.getValueAt(index, 0).toString());
+            txtTenLoai.setText(tblLoai.getValueAt(index, 1).toString());
         }
     }
 

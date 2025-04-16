@@ -87,7 +87,7 @@ public class ThongKePanel extends javax.swing.JPanel {
         cbxNhanVien = new JComboBox<>();
         danhSachNhanVien = new ArrayList<>();
         NhanVienDao nvDao = new NhanVienDao();
-        danhSachNhanVien = nvDao.findAll();
+        danhSachNhanVien = nvDao.findAllNhanVien();
 
         // Tạo panel chứa nội dung thống kê
         JPanel panelNoiDung = new JPanel();

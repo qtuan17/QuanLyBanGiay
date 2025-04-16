@@ -8,7 +8,6 @@ import Dao.HoaDonDao;
 import Dao.NhanVienDao;
 import Model.ChiTietHoaDon;
 import Model.NhanVien;
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -29,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import viewModel.HoaDonView;
@@ -43,10 +41,8 @@ public class HoaDonPanel extends javax.swing.JPanel {
     private DefaultTableModel model;
     HoaDonDao hoaDonDao;
     NhanVienDao nhanVienDao;
-    int index = -1;
 
     public HoaDonPanel(java.awt.Frame parent, boolean modal) throws Exception {
-        UIManager.setLookAndFeel(new FlatIntelliJLaf());
         initComponents();
         hoaDonDao = new HoaDonDao();
         nhanVienDao = new NhanVienDao();
@@ -55,65 +51,55 @@ public class HoaDonPanel extends javax.swing.JPanel {
         fillCbbTrangThai();
     }
 
-    public void fillCbbNhanVien() {
+    private void fillCbbNhanVien() {
         DefaultComboBoxModel<String> cbbModel = (DefaultComboBoxModel<String>) cbb_fillNhanVien.getModel();
         cbbModel.removeAllElements();
-        cbbModel.addElement("Tất cả"); // Thêm dòng đầu tiên
-
-        List<NhanVien> nhanViens = nhanVienDao.findAll();
-        for (NhanVien nv : nhanViens) {
+        cbbModel.addElement("Tất cả");
+        for (NhanVien nv : nhanVienDao.findAllNhanVien()) {
             if (nv.getTrangThai() == 1) {
                 cbbModel.addElement(nv.getHoTenNV());
             }
         }
     }
 
-    public void fillCbbTrangThai() {
+    private void fillCbbTrangThai() {
         DefaultComboBoxModel<String> cbbTrangThaiModel = (DefaultComboBoxModel<String>) cbb_fillTrangThai.getModel();
         cbbTrangThaiModel.addElement("Tất cả");
         cbbTrangThaiModel.addElement("Chưa Thanh Toán");
         cbbTrangThaiModel.addElement("Đã Thanh Toán");
+        cbbTrangThaiModel.addElement("Đang chờ");
         cbbTrangThaiModel.addElement("Đã Hủy");
     }
 
-    void fillTableHoaDon() {
+    private void fillTableHoaDon() {
         DefaultTableModel modelHD = (DefaultTableModel) tblQLHD.getModel();
         modelHD.setRowCount(0);
         try {
-            List<HoaDonView> hoaDons = hoaDonDao.findAll();
-
-            // Lấy giá trị từ ComboBox
             String selectedNhanVien = (String) cbb_fillNhanVien.getSelectedItem();
             String selectedTrangThai = (String) cbb_fillTrangThai.getSelectedItem();
-
-            for (HoaDonView hoaDon : hoaDons) {
+            for (HoaDonView hoaDon : hoaDonDao.findAllHoaDon()) {
                 boolean match = true;
 
-                // Lọc theo nhân viên
-                if (selectedNhanVien != null && !selectedNhanVien.equals("Tất cả")) {
-                    if (!hoaDon.getHoTenNV().equalsIgnoreCase(selectedNhanVien)) {
-                        match = false;
-                    }
+                if (selectedNhanVien != null && !selectedNhanVien.equals("Tất cả")
+                        && !hoaDon.getHoTenNV().equalsIgnoreCase(selectedNhanVien)) {
+                    match = false;
                 }
 
-                // Lọc theo trạng thái
                 if (selectedTrangThai != null && !selectedTrangThai.equals("Tất cả")) {
-                    switch (selectedTrangThai) {
-                        case "Chưa Thanh Toán" -> {
-                            if (hoaDon.getTrangThai() != 0) {
-                                match = false;
-                            }
-                        }
-                        case "Đã Thanh Toán" -> {
-                            if (hoaDon.getTrangThai() != 1) {
-                                match = false;
-                            }
-                        }
-                        case "Đã Hủy" -> {
-                            if (hoaDon.getTrangThai() != 2) {
-                                match = false;
-                            }
-                        }
+                    int expectedTrangThai = switch (selectedTrangThai) {
+                        case "Chưa Thanh Toán" ->
+                            0;
+                        case "Đã Thanh Toán" ->
+                            1;
+                        case "Đã Hủy" ->
+                            2;
+                        case "Đang chờ" ->
+                            3;
+                        default ->
+                            -1;
+                    };
+                    if (hoaDon.getTrangThai() != expectedTrangThai) {
+                        match = false;
                     }
                 }
 
@@ -128,11 +114,13 @@ public class HoaDonPanel extends javax.swing.JPanel {
                         "Đã Thanh Toán";
                     case 2 ->
                         "Đã Hủy";
+                    case 3 ->
+                        "Đang chờ";
                     default ->
                         "Không xác định";
                 };
 
-                Object[] row = {
+                modelHD.addRow(new Object[]{
                     hoaDon.getIdHd(),
                     hoaDon.getHoTenNV(),
                     hoaDon.getHoTenKH(),
@@ -141,16 +129,14 @@ public class HoaDonPanel extends javax.swing.JPanel {
                     hoaDon.getThanhTien(),
                     hoaDon.getNgayTao(),
                     trangThaiStr
-                };
-                modelHD.addRow(row);
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Cửa sổ nổi chi tiết hóa đơn
-    void popup_ChiTietHoaDon() {
+    private void popup_ChiTietHoaDon() {
         int selectedRow = tblQLHD.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.WARNING_MESSAGE);
@@ -158,7 +144,19 @@ public class HoaDonPanel extends javax.swing.JPanel {
         }
 
         int idHD = (int) tblQLHD.getValueAt(selectedRow, 0);
-        List<ChiTietHoaDon> listChiTiet = hoaDonDao.findCTHDByIDHD(idHD);
+        String trangThaiStr = tblQLHD.getValueAt(selectedRow, 7).toString();
+        int trangThai = switch (trangThaiStr) {
+            case "Chưa Thanh Toán" ->
+                0;
+            case "Đã Thanh Toán" ->
+                1;
+            case "Đã Hủy" ->
+                2;
+            case "Đang chờ" ->
+                3;
+            default ->
+                -1;
+        };
 
         HoaDonView hoaDon = new HoaDonView(
                 idHD,
@@ -167,11 +165,11 @@ public class HoaDonPanel extends javax.swing.JPanel {
                 tblQLHD.getValueAt(selectedRow, 3).toString(),
                 tblQLHD.getValueAt(selectedRow, 4).toString(),
                 (java.sql.Date) tblQLHD.getValueAt(selectedRow, 6),
-                Double.valueOf(tblQLHD.getValueAt(selectedRow, 5).toString()),
-                tblQLHD.getValueAt(selectedRow, 7).toString().equals("Chưa Thanh Toán") ? 1
-                : tblQLHD.getValueAt(selectedRow, 7).toString().equals("Đã Hủy") ? 2 : 0
+                Double.parseDouble(tblQLHD.getValueAt(selectedRow, 5).toString()),
+                trangThai
         );
 
+        List<ChiTietHoaDon> listChiTiet = hoaDonDao.findCTHDByIDHD(idHD);
         Window parent = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(parent, "Chi tiết hóa đơn", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
@@ -179,7 +177,6 @@ public class HoaDonPanel extends javax.swing.JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // ==== Thông tin hóa đơn ====
         JPanel pnlHoaDon = new JPanel(new GridBagLayout());
         pnlHoaDon.setBorder(BorderFactory.createTitledBorder("Thông tin hóa đơn"));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -196,15 +193,24 @@ public class HoaDonPanel extends javax.swing.JPanel {
             {"Địa chỉ:", hoaDon.getDiaChi()},
             {"Ngày tạo:", hoaDon.getNgayTao() != null ? hoaDon.getNgayTao().toString() : ""},
             {"Thành tiền:", String.valueOf(hoaDon.getThanhTien())},
-            {"Trạng thái:", hoaDon.getTrangThai() == 1 ? "Chưa Thanh Toán"
-                : hoaDon.getTrangThai() == 2 ? "Đã Hủy" : "Đã Thanh Toán"}
+            {"Trạng thái:", switch (hoaDon.getTrangThai()) {
+                case 0 ->
+                    "Chưa Thanh Toán";
+                case 1 ->
+                    "Đã Thanh Toán";
+                case 2 ->
+                    "Đã Hủy";
+                case 3 ->
+                    "Đang chờ";
+                default ->
+                    "Không xác định";
+            }}
         };
 
         for (int i = 0; i < invoiceData.length; i++) {
             gbc.gridx = 0;
             gbc.gridy = i;
             pnlHoaDon.add(new JLabel(invoiceData[i][0]), gbc);
-
             gbc.gridx = 1;
             JLabel valueLabel = new JLabel(invoiceData[i][1]);
             valueLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
@@ -212,21 +218,15 @@ public class HoaDonPanel extends javax.swing.JPanel {
         }
         mainPanel.add(pnlHoaDon, BorderLayout.NORTH);
 
-        // ==== Bảng chi tiết hóa đơn ====
-        DefaultTableModel modelCTHD = new DefaultTableModel();
-        modelCTHD.addColumn("ID_CTSP");
-        modelCTHD.addColumn("Tên sản phẩm");
-        modelCTHD.addColumn("Số lượng");
-        modelCTHD.addColumn("Đơn giá");
-        modelCTHD.addColumn("Thành tiền");
-
+        DefaultTableModel modelCTHD = new DefaultTableModel(new String[]{"ID_CTSP", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền"}, 0);
         for (ChiTietHoaDon ct : listChiTiet) {
             modelCTHD.addRow(new Object[]{
                 ct.getIdCTSP(),
                 ct.getTenSP(),
                 ct.getSoLuong(),
                 ct.getDonGia(),
-                ct.getThanhTien(),});
+                ct.getThanhTien()
+            });
         }
 
         JTable tblCTHD = new JTable(modelCTHD);
@@ -239,20 +239,19 @@ public class HoaDonPanel extends javax.swing.JPanel {
         scrollPane.setBorder(BorderFactory.createTitledBorder("Chi tiết hóa đơn"));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // ==== Các nút chức năng ====
         JPanel pnlButton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
-
         JButton btnHuyDon = new JButton("Hủy Đơn");
         btnHuyDon.setFont(new Font("SansSerif", Font.BOLD, 12));
         btnHuyDon.setBackground(Color.RED);
         btnHuyDon.setForeground(Color.WHITE);
+        btnHuyDon.setVisible(hoaDon.getTrangThai() != 2);
+
         btnHuyDon.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(dialog, "Xác nhận hủy đơn hàng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 boolean isCanceled = hoaDonDao.huyHoaDon(hoaDon.getIdHd());
                 if (isCanceled) {
                     hoaDonDao.rollbackSanPhamTrongHoaDon(hoaDon.getIdHd());
-
                     JOptionPane.showMessageDialog(dialog, "Hủy đơn thành công và hoàn kho!");
                     dialog.dispose();
                     fillTableHoaDon();
@@ -261,6 +260,7 @@ public class HoaDonPanel extends javax.swing.JPanel {
                 }
             }
         });
+
         JButton btnDoiTra = new JButton("Yêu cầu Đổi / Trả");
         btnDoiTra.setFont(new Font("SansSerif", Font.BOLD, 12));
         btnDoiTra.setBackground(new Color(255, 204, 0));
@@ -274,10 +274,12 @@ public class HoaDonPanel extends javax.swing.JPanel {
         JButton btnClose = new JButton("Đóng");
         btnClose.setFont(new Font("SansSerif", Font.BOLD, 12));
         btnClose.addActionListener(e -> dialog.dispose());
+
         pnlButton.add(btnHuyDon);
         pnlButton.add(btnDoiTra);
         pnlButton.add(btnClose);
         mainPanel.add(pnlButton, BorderLayout.SOUTH);
+
         dialog.add(mainPanel, BorderLayout.CENTER);
         dialog.setPreferredSize(new Dimension(800, 600));
         dialog.pack();

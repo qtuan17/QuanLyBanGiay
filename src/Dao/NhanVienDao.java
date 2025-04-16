@@ -26,7 +26,8 @@ public class NhanVienDao {
         connection = util.DBContext.getConnection();
     }
 
-    public List<NhanVien> findAll() {
+    public List<NhanVien> findAllNhanVien() {
+        System.out.println("→ Gọi phương thức: findAllNhanVien() - Lấy danh sách toàn bộ nhân viên");
         List<NhanVien> lstNV = new ArrayList<>();
         String sql = "SELECT * FROM NhanVien";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -50,6 +51,7 @@ public class NhanVienDao {
     }
 
     public int create(NhanVien nhanVien) {
+        System.out.println("→ Gọi phương thức: create() - Thêm nhân viên mới: " + nhanVien.getHoTenNV());
         int add = 0;
         String sql = "INSERT INTO NhanVien (HoTenNV, NgaySinh, DiaChi, SDT, Password, TrangThai, Role) VALUES (?, ?, ?, ?, ?, 1, 0)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -72,6 +74,7 @@ public class NhanVienDao {
     }
 
     public NhanVien findBySdt(String sdt) {
+        System.out.println("→ Gọi phương thức: findBySdt() - Tìm nhân viên theo SĐT: " + sdt);
         String sql = "SELECT * FROM NhanVien WHERE SDT = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, sdt);
@@ -94,6 +97,7 @@ public class NhanVienDao {
     }
 
     public int update(NhanVien nhanVien) {
+        System.out.println("→ Gọi phương thức: update() - Cập nhật nhân viên ID = " + nhanVien.getIdNV());
         int updated = 0;
         String sql = "UPDATE NhanVien SET HoTenNV = ?, NgaySinh = ?, DiaChi = ?, SDT = ?, Password = ?, TrangThai = 1, Role = ? WHERE ID_NV = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -104,13 +108,10 @@ public class NhanVienDao {
                 sqlDate = new java.sql.Date(nhanVien.getNgaySinh().getTime());
             }
             preparedStatement.setDate(2, sqlDate);
-
             preparedStatement.setString(3, nhanVien.getDiaChi());
             preparedStatement.setString(4, nhanVien.getSdt());
             preparedStatement.setString(5, nhanVien.getPassword());
-//            preparedStatement.setInt(6, nhanVien.getTrangThai());
             preparedStatement.setBoolean(6, nhanVien.isRole());
-
             preparedStatement.setInt(7, nhanVien.getIdNV());
 
             updated = preparedStatement.executeUpdate();
@@ -119,5 +120,4 @@ public class NhanVienDao {
         }
         return updated;
     }
-
 }

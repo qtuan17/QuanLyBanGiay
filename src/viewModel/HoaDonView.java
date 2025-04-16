@@ -17,7 +17,6 @@ public class HoaDonView {
     private double thanhTien;
     private int trangThai;
 
-    // Constructor
     public HoaDonView(int idHd, String hoTenNV, String hoTenKH, Date ngayTao, double thanhTien, int trangThai) {
         this.idHd = idHd;
         this.hoTenNV = hoTenNV;
@@ -109,6 +108,8 @@ public class HoaDonView {
             return "Đã Thanh Toán";
         } else if (trangThai == 2) {
             return "Đã Huỷ";
+        } else if (trangThai == 3) {
+            return "Đang Chờ";
         } else {
             return "Đang Cập Nhật";
         }

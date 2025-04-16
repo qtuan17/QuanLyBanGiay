@@ -26,6 +26,7 @@ public class LoginDao {
     }
 
     public NhanVien Login(String sdt, String password) {
+        System.out.println("→ Gọi phương thức: Login() - Thử đăng nhập với SĐT: " + sdt);
         String sql = "SELECT * FROM NhanVien WHERE SDT = ? AND Password = ?";
         NhanVien nhanVien = null;
 
@@ -46,11 +47,14 @@ public class LoginDao {
                         resultSet.getInt("TrangThai"),
                         resultSet.getBoolean("Role")
                 );
-                // de o day
+                System.out.println("✅ Đăng nhập thành công cho nhân viên: " + nhanVien.getHoTenNV());
                 SessionLogin.setNhanVienLogin(nhanVien);
+            } else {
+                System.out.println("❌ Đăng nhập thất bại - Sai thông tin tài khoản hoặc mật khẩu");
             }
 
         } catch (SQLException e) {
+            System.out.println("⚠️ Lỗi khi thực hiện truy vấn đăng nhập:");
             e.printStackTrace();
         }
 

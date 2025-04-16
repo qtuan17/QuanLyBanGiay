@@ -24,53 +24,42 @@ public class ColorJDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setTitle("Bảng Màu");
-        this.setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
         mauDao = new MauDao();
         fillTableMau();
     }
 
-    //Hiển thị bảng màu
     void fillTableMau() {
         model = (DefaultTableModel) tblColor.getModel();
         model.setRowCount(0);
         try {
-            List<Mau> maus = mauDao.findAll();
-            if (maus.isEmpty()) {
-                System.out.println("List Mau NUll");
-            }
+            List<Mau> maus = mauDao.findAllMau();
             for (Mau mau : maus) {
-                Object[] row = {
+                model.addRow(new Object[]{
                     mau.getIdMau(),
                     mau.getTenMau(),
                     mau.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
-                };
-                model.addRow(row);
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Phương thức kiểm tra dữ liệu nhập của form Màu
     private boolean validateFormMau() {
-        // Lấy tên màu đã nhập và loại bỏ khoảng trắng thừa
         String tenMau = txtTenMau.getText().trim();
         if (tenMau.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tên màu!");
             return false;
         }
-        // Nếu bạn cần kiểm tra thêm các điều kiện khác (ví dụ: độ dài ký tự, định dạng,...)
         return true;
     }
 
-    // Lấy dữ liệu từ form và tạo đối tượng Mau (sau khi đã kiểm tra validate)
     private Mau getFormMau() {
-        // Kiểm tra dữ liệu nhập, nếu không hợp lệ thì trả về null
         if (!validateFormMau()) {
             return null;
         }
         Mau mau = new Mau();
-        // Nếu đang chỉnh sửa sản phẩm (index != -1) thì set ID màu, có thể cần kiểm tra định dạng số
         if (index != -1) {
             try {
                 int idMau = Integer.parseInt(txtIDMau.getText().trim());
@@ -84,13 +73,10 @@ public class ColorJDialog extends javax.swing.JDialog {
         return mau;
     }
 
-    // Phương thức hiển thị dữ liệu từ bảng vào form (không cần thay đổi để validate)
     private void setFormMau(int index) {
         if (index != -1) {
-            String idMau = tblColor.getValueAt(index, 0).toString();
-            String tenMau = tblColor.getValueAt(index, 1).toString();
-            txtIDMau.setText(idMau);
-            txtTenMau.setText(tenMau);
+            txtIDMau.setText(tblColor.getValueAt(index, 0).toString());
+            txtTenMau.setText(tblColor.getValueAt(index, 1).toString());
         }
     }
 

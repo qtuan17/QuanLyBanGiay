@@ -26,7 +26,8 @@ public class LoaiDao {
         connection = util.DBContext.getConnection();
     }
 
-    public List<Loai> findAll() {
+    public List<Loai> findAllLoai() {
+        System.out.println("→ Gọi phương thức: findAllLoai() - Lấy danh sách tất cả loại sản phẩm");
         List<Loai> loais = new ArrayList<>();
         String sql = "SELECT * FROM Loai";
         try {
@@ -47,9 +48,9 @@ public class LoaiDao {
     }
 
     public int create(Loai loai) {
+        System.out.println("→ Gọi phương thức: create() - Thêm mới loại sản phẩm: " + loai.getTenLoai());
         int rowedit = 0;
-        String sql = "INSERT INTO Loai (TenLoai, TrangThai) VALUES \n"
-                + "(?, 1)";
+        String sql = "INSERT INTO Loai (TenLoai, TrangThai) VALUES (?, 1)";
         try {
             preparedStatement = connection.prepareCall(sql);
             preparedStatement.setString(1, loai.getTenLoai());
@@ -61,8 +62,9 @@ public class LoaiDao {
     }
 
     public int update(Loai loai) {
+        System.out.println("→ Gọi phương thức: update() - Cập nhật tên loại sản phẩm ID = " + loai.getIdLoai());
         int rowedit = 0;
-        String sql = "UPDATE Loai set Tenloai = ? WHERE ID_Loai = ?";
+        String sql = "UPDATE Loai SET TenLoai = ? WHERE ID_Loai = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, loai.getTenLoai());
@@ -75,8 +77,9 @@ public class LoaiDao {
     }
 
     public int delete(Loai loai) {
+        System.out.println("→ Gọi phương thức: delete() - Ẩn loại sản phẩm ID = " + loai.getIdLoai());
         int rowedit = 0;
-        String sql = "UPDATE Loai set trangthai = ? WHERE ID_Loai = ?";
+        String sql = "UPDATE Loai SET TrangThai = ? WHERE ID_Loai = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 0);
@@ -89,8 +92,9 @@ public class LoaiDao {
     }
 
     public int khoiphuc(Loai loai) {
+        System.out.println("→ Gọi phương thức: khoiphuc() - Khôi phục loại sản phẩm ID = " + loai.getIdLoai());
         int rowedit = 0;
-        String sql = "UPDATE Loai set trangthai = ? WHERE ID_Loai = ?";
+        String sql = "UPDATE Loai SET TrangThai = ? WHERE ID_Loai = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 1);
@@ -103,6 +107,7 @@ public class LoaiDao {
     }
 
     public Loai findById(int id) {
+        System.out.println("→ Gọi phương thức: findById() - Tìm loại sản phẩm theo ID = " + id);
         String sql = "SELECT * FROM Loai WHERE ID_Loai = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);

@@ -29,7 +29,7 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setTitle("");
-        setLocationRelativeTo(null);  // Căn giữa màn hình
+        setLocationRelativeTo(null);
         sanPhamDao = new SanPhamDao();
         loaiDao = new LoaiDao();
         fillTableGiay();
@@ -40,24 +40,16 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         model = (DefaultTableModel) tblGiay.getModel();
         model.setRowCount(0);
         try {
-            List<SanPham> sanPhams = sanPhamDao.findAll();
-            if (sanPhams.isEmpty()) {
-                System.out.println("List Giay trống.");
-            }
-            for (SanPham sanPham : sanPhams) {
-                // Lấy tên loại tương ứng từ LoaiDao
-                Loai loai = loaiDao.findById(sanPham.getIdLoai());
-                String tenLoai = (loai != null) ? loai.getTenLoai() : "Không rõ";
-
-                Object[] row = {
-                    sanPham.getIdSP(),
-                    sanPham.getMaGiay(),
-                    sanPham.getTenGiay(),
-                    //                    sanPham.getIdLoai(),
-                    tenLoai, // ✅ Hiển thị tên loại thay vì ID
-                    sanPham.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
-                };
-                model.addRow(row);
+            for (SanPham sp : sanPhamDao.findAllSanPham()) {
+                Loai loai = loaiDao.findById(sp.getIdLoai());
+                String tenLoai = loai != null ? loai.getTenLoai() : "Không rõ";
+                model.addRow(new Object[]{
+                    sp.getIdSP(),
+                    sp.getMaGiay(),
+                    sp.getTenGiay(),
+                    tenLoai,
+                    sp.getTrangThai() == 1 ? "Tồn Tại" : "Không Tồn Tại"
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,10 +57,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     }
 
     public void fillCbbLoai() {
-        DefaultComboBoxModel<Loai> cbbLoaiModel = (DefaultComboBoxModel<Loai>) this.cbbLoai.getModel();
+        DefaultComboBoxModel<Loai> cbbLoaiModel = (DefaultComboBoxModel<Loai>) cbbLoai.getModel();
         cbbLoaiModel.removeAllElements();
-        List<Loai> loais = loaiDao.findAll();
-        for (Loai loai : loais) {
+        for (Loai loai : loaiDao.findAllLoai()) {
             if (loai.getTrangThai() == 1) {
                 cbbLoaiModel.addElement(loai);
             }
@@ -78,29 +69,25 @@ public class SanPhamJDialog extends javax.swing.JDialog {
     private void submitFormSanPham_TaoMoi() {
         String maGiay = txtMaGiay.getText().trim();
         String tenGiay = txtTenGiay.getText().trim();
-        Loai selectedLoai = (Loai) cbbLoai.getSelectedItem();
+        Loai loai = (Loai) cbbLoai.getSelectedItem();
 
-        // Kiểm tra dữ liệu rỗng
-        if (maGiay.isEmpty() || tenGiay.isEmpty() || selectedLoai == null) {
+        if (maGiay.isEmpty() || tenGiay.isEmpty() || loai == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin sản phẩm.");
             return;
         }
 
-        // Kiểm tra mã giày đã tồn tại
         if (sanPhamDao.findByMaGiay(maGiay) != null) {
             JOptionPane.showMessageDialog(this, "Mã giày đã tồn tại. Vui lòng chọn mã khác.");
             return;
         }
 
-        // Tạo sản phẩm mới
-        SanPham sanPham = new SanPham();
-        sanPham.setMaGiay(maGiay);
-        sanPham.setTenGiay(tenGiay);
-        sanPham.setIdLoai(selectedLoai.getIdLoai());
-        sanPham.setTrangThai(1); // mặc định tồn tại
+        SanPham sp = new SanPham();
+        sp.setMaGiay(maGiay);
+        sp.setTenGiay(tenGiay);
+        sp.setIdLoai(loai.getIdLoai());
+        sp.setTrangThai(1);
 
-        // Thêm vào DB
-        int result = sanPhamDao.create(sanPham);
+        int result = sanPhamDao.create(sp);
         if (result > 0) {
             JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
             fillTableGiay();
@@ -114,10 +101,9 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         String idStr = txt_IDSanPham.getText().trim();
         String maGiay = txtMaGiay.getText().trim();
         String tenGiay = txtTenGiay.getText().trim();
-        Loai selectedLoai = (Loai) cbbLoai.getSelectedItem();
+        Loai loai = (Loai) cbbLoai.getSelectedItem();
 
-        // Kiểm tra dữ liệu rỗng
-        if (idStr.isEmpty() || maGiay.isEmpty() || tenGiay.isEmpty() || selectedLoai == null) {
+        if (idStr.isEmpty() || maGiay.isEmpty() || tenGiay.isEmpty() || loai == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin sản phẩm.");
             return;
         }
@@ -130,33 +116,26 @@ public class SanPhamJDialog extends javax.swing.JDialog {
             return;
         }
 
-        // Kiểm tra trùng mã giày với sản phẩm khác
         SanPham existed = sanPhamDao.findByMaGiay(maGiay);
         if (existed != null && existed.getIdSP() != idSP) {
             JOptionPane.showMessageDialog(this, "Mã giày đã tồn tại ở sản phẩm khác.");
             return;
         }
 
-        // Xác nhận cập nhật
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc muốn cập nhật sản phẩm này?",
-                "Xác nhận cập nhật",
-                JOptionPane.YES_NO_OPTION);
-
+        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn cập nhật sản phẩm này?",
+                "Xác nhận cập nhật", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
 
-        // Tạo đối tượng cập nhật
-        SanPham sanPham = new SanPham();
-        sanPham.setIdSP(idSP);
-        sanPham.setMaGiay(maGiay);
-        sanPham.setTenGiay(tenGiay);
-        sanPham.setIdLoai(selectedLoai.getIdLoai());
-        sanPham.setTrangThai(1); // giữ trạng thái tồn tại
+        SanPham sp = new SanPham();
+        sp.setIdSP(idSP);
+        sp.setMaGiay(maGiay);
+        sp.setTenGiay(tenGiay);
+        sp.setIdLoai(loai.getIdLoai());
+        sp.setTrangThai(1);
 
-        // Thực hiện cập nhật
-        int result = sanPhamDao.update(sanPham);
+        int result = sanPhamDao.update(sp);
         if (result > 0) {
             JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thành công!");
             fillTableGiay();
@@ -164,10 +143,10 @@ public class SanPhamJDialog extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thất bại!");
         }
-
     }
 
     private void clearFormSanPham() {
+        txt_IDSanPham.setText("");
         txtMaGiay.setText("");
         txtTenGiay.setText("");
         cbbLoai.setSelectedIndex(0);
@@ -179,16 +158,11 @@ public class SanPhamJDialog extends javax.swing.JDialog {
             txt_IDSanPham.setText(tblGiay.getValueAt(row, 0).toString());
             txtMaGiay.setText(tblGiay.getValueAt(row, 1).toString());
             txtTenGiay.setText(tblGiay.getValueAt(row, 2).toString());
-            // Lấy tên loại được hiển thị trên bảng (cột 3 chứa tên loại)
-            String tenLoaiTable = tblGiay.getValueAt(row, 3).toString();
+            String tenLoai = tblGiay.getValueAt(row, 3).toString();
 
-            // Lấy model của combobox chứa các đối tượng Loai
-            DefaultComboBoxModel<Loai> cbbModel = (DefaultComboBoxModel<Loai>) cbbLoai.getModel();
-            // Duyệt qua các phần tử trong combobox
-            for (int i = 0; i < cbbModel.getSize(); i++) {
-                Loai loai = (Loai) cbbModel.getElementAt(i);
-                // So sánh tên loại của đối tượng với tên lấy từ bảng
-                if (loai.getTenLoai().equals(tenLoaiTable)) {
+            DefaultComboBoxModel<Loai> model = (DefaultComboBoxModel<Loai>) cbbLoai.getModel();
+            for (int i = 0; i < model.getSize(); i++) {
+                if (model.getElementAt(i).getTenLoai().equals(tenLoai)) {
                     cbbLoai.setSelectedIndex(i);
                     break;
                 }

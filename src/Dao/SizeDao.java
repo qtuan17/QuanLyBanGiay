@@ -26,7 +26,8 @@ public class SizeDao {
         connection = util.DBContext.getConnection();
     }
 
-    public List<Size> findAll() {
+    public List<Size> findAllSize() {
+        System.out.println("→ Gọi phương thức: findAllSize() - Lấy danh sách toàn bộ size");
         List<Size> sizes = new ArrayList<>();
         String sql = "SELECT * FROM Size";
         try {
@@ -45,10 +46,11 @@ public class SizeDao {
         }
         return sizes;
     }
+
     public int create(Size size) {
+        System.out.println("→ Gọi phương thức: create() - Thêm size mới: " + size.getTenSize());
         int rowedit = 0;
-        String sql = "INSERT INTO Size (TenSize, TrangThai) VALUES \n"
-                + "(?, 1)";
+        String sql = "INSERT INTO Size (TenSize, TrangThai) VALUES (?, 1)";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, size.getTenSize());
@@ -57,11 +59,12 @@ public class SizeDao {
             e.printStackTrace();
         }
         return rowedit;
-
     }
+
     public int update(Size size) {
+        System.out.println("→ Gọi phương thức: update() - Cập nhật size ID = " + size.getIdSize());
         int rowedit = 0;
-        String sql = "UPDATE Size set TenSize = ? WHERE ID_Size = ?";
+        String sql = "UPDATE Size SET TenSize = ? WHERE ID_Size = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, size.getTenSize());
@@ -72,9 +75,11 @@ public class SizeDao {
         }
         return rowedit;
     }
+
     public int delete(Size size) {
+        System.out.println("→ Gọi phương thức: delete() - Ẩn size ID = " + size.getIdSize());
         int rowedit = 0;
-        String sql = "UPDATE Size set trangthai = ? WHERE ID_Size = ?";
+        String sql = "UPDATE Size SET TrangThai = ? WHERE ID_Size = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 0);
@@ -85,9 +90,11 @@ public class SizeDao {
         }
         return rowedit;
     }
+
     public int khoiphuc(Size size) {
+        System.out.println("→ Gọi phương thức: khoiphuc() - Khôi phục size ID = " + size.getIdSize());
         int khoiphuc = 0;
-        String sql = "UPDATE Size set trangthai = ? WHERE ID_Size = ?";
+        String sql = "UPDATE Size SET TrangThai = ? WHERE ID_Size = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 1);

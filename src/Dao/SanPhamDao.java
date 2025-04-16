@@ -26,7 +26,8 @@ public class SanPhamDao {
         connection = util.DBContext.getConnection();
     }
 
-    public List<SanPham> findAll() {
+    public List<SanPham> findAllSanPham() {
+        System.out.println("→ Gọi phương thức: findAllSanPham() - Lấy danh sách toàn bộ sản phẩm");
         List<SanPham> sanphams = new ArrayList<>();
         String sql = "SELECT * FROM SanPham";
         try {
@@ -49,6 +50,7 @@ public class SanPhamDao {
     }
 
     public int create(SanPham sp) {
+        System.out.println("→ Gọi phương thức: create() - Thêm sản phẩm mới: " + sp.getMaGiay());
         int result = 0;
         String sql = "INSERT INTO SanPham (MaGiay, TenGiay, ID_Loai, TrangThai) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -64,6 +66,7 @@ public class SanPhamDao {
     }
 
     public int update(SanPham sp) {
+        System.out.println("→ Gọi phương thức: update() - Cập nhật sản phẩm ID = " + sp.getIdSP());
         String sql = "UPDATE SanPham SET MaGiay = ?, TenGiay = ?, ID_Loai = ?, TrangThai = ? WHERE ID_SP = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, sp.getMaGiay());
@@ -79,6 +82,7 @@ public class SanPhamDao {
     }
 
     public SanPham findByMaGiay(String maGiay) {
+        System.out.println("→ Gọi phương thức: findByMaGiay() - Tìm sản phẩm theo mã: " + maGiay);
         String sql = "SELECT * FROM SanPham WHERE MaGiay = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, maGiay);

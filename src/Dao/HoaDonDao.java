@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import util.DBContext;
 import viewModel.HoaDonView;
 import viewModel.ThongKe;
 
@@ -35,21 +34,16 @@ public class HoaDonDao {
         connection = util.DBContext.getConnection();
     }
 
-    public List<HoaDonView> findAll() {
+    public List<HoaDonView> findAllHoaDon() {
+        System.out.println("→ Gọi phương thức: findAllHoaDon() - Lấy danh sách toàn bộ hóa đơn");
         List<HoaDonView> hoaDons = new ArrayList<>();
-        String sql = ""
-                + "Select\n"
-                + "	hd.ID_HD,\n"
-                + "	nv.HoTenNV,\n"
-                + "	kh.HoTenKH,\n"
-                + "	kh.SDT,\n"
-                + "	kh.DiaChi,\n"
-                + "	hd.NgayTao,\n"
-                + "	hd.ThanhTien,\n"
-                + "	hd.TrangThai\n"
-                + "From HoaDon hd\n"
-                + "join NhanVien nv on hd.ID_NV = nv.ID_NV\n"
-                + "join KhachHang kh on kh.ID_KH = hd.ID_KH";
+        String sql = """
+            SELECT hd.ID_HD, nv.HoTenNV, kh.HoTenKH, kh.SDT, kh.DiaChi, hd.NgayTao, hd.ThanhTien, hd.TrangThai
+            FROM HoaDon hd
+            JOIN NhanVien nv ON hd.ID_NV = nv.ID_NV
+            JOIN KhachHang kh ON kh.ID_KH = hd.ID_KH
+        """;
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 HoaDonView hoadon = new HoaDonView(
@@ -71,23 +65,25 @@ public class HoaDonDao {
     }
 
     public List<ChiTietHoaDon> findCTHDByIDHD(int idHD) {
+        System.out.println("→ Gọi phương thức: findCTHDByIDHD() với ID_HD = " + idHD);
         List<ChiTietHoaDon> chiTietHoaDons = new ArrayList<>();
         String sql = """
-                    SELECT 
-                        cthd.ID_CTHD,
-                        cthd.ID_HD,
-                        cthd.ID_CTSP,
-                        sp.TenGiay AS TenSP,
-                        cthd.SoLuong,
-                        cthd.DonGia,
-                        cthd.ThanhTien,
-                        cthd.TrangThai
-                    FROM SHOSE_SHOP_VER2.dbo.ChiTietHoaDon cthd
-                    JOIN SHOSE_SHOP_VER2.dbo.ChiTietSanPham ctsp ON cthd.ID_CTSP = ctsp.ID_CTSP
-                    JOIN SHOSE_SHOP_VER2.dbo.SanPham sp ON ctsp.ID_SP = sp.ID_SP
-                    WHERE cthd.ID_HD = ?""";
+            SELECT 
+                cthd.ID_CTHD,
+                cthd.ID_HD,
+                cthd.ID_CTSP,
+                sp.TenGiay AS TenSP,
+                cthd.SoLuong,
+                cthd.DonGia,
+                cthd.ThanhTien,
+                cthd.TrangThai
+            FROM SHOSE_SHOP_VER2.dbo.ChiTietHoaDon cthd
+            JOIN SHOSE_SHOP_VER2.dbo.ChiTietSanPham ctsp ON cthd.ID_CTSP = ctsp.ID_CTSP
+            JOIN SHOSE_SHOP_VER2.dbo.SanPham sp ON ctsp.ID_SP = sp.ID_SP
+            WHERE cthd.ID_HD = ?
+        """;
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            // Đặt giá trị cho tham số ID_HD
             preparedStatement.setInt(1, idHD);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -111,30 +107,43 @@ public class HoaDonDao {
     }
 
     public int insert(HoaDon hoaDon) {
+        System.out.println("→ Gọi phương thức: insert() - Thêm hóa đơn mới");
         String sql = "INSERT INTO HoaDon (ID_NV, ID_KH, ThanhTien, NgayTao, TrangThai) VALUES (?, ?, ?, ?, ?)";
-        System.out.println(hoaDon.toString());
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, hoaDon.getIdNV());
             ps.setInt(2, hoaDon.getIdKH());
             ps.setDouble(3, 0);
             ps.setDate(4, Date.valueOf(LocalDate.now()));
-            ps.setInt(5, 0); // 0 là chưa thanh toán
-            int affectedRows = ps.executeUpdate();
-            return affectedRows;
+            ps.setInt(5, 3);
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return -1; // insert thất bại
+        return -1;
     }
 
     public int thanhToan(HoaDon hoaDon) {
+        System.out.println("→ Gọi phương thức: thanhToan() - Cập nhật thanh toán cho hóa đơn");
         String sql = "UPDATE HoaDon SET ThanhTien = ?, TrangThai = ? WHERE ID_HD = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setDouble(1, hoaDon.getThanhTien());
-            ps.setInt(2, 2);
+            ps.setInt(2, 1);
             ps.setInt(3, hoaDon.getIdHD());
-            return ps.executeUpdate(); // Trả về số dòng bị ảnh hưởng
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int setHoaDonCho(HoaDon hoaDon) {
+        System.out.println("→ Gọi phương thức: setHoaDonCho() - Đặt trạng thái hóa đơn chờ");
+        String sql = "UPDATE HoaDon SET ThanhTien = ?, TrangThai = ? WHERE ID_HD = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDouble(1, hoaDon.getThanhTien());
+            ps.setInt(2, 3);
+            ps.setInt(3, hoaDon.getIdHD());
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -142,6 +151,7 @@ public class HoaDonDao {
     }
 
     public boolean huyHoaDon(int idHD) {
+        System.out.println("→ Gọi phương thức: huyHoaDon() với ID_HD = " + idHD);
         String sql = "UPDATE HoaDon SET TrangThai = 2 WHERE ID_HD = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idHD);
@@ -153,6 +163,7 @@ public class HoaDonDao {
     }
 
     public void rollbackSanPhamTrongHoaDon(int idHD) {
+        System.out.println("→ Gọi phương thức: rollbackSanPhamTrongHoaDon() với ID_HD = " + idHD);
         String sql = "SELECT ID_CTSP, SoLuong FROM ChiTietHoaDon WHERE ID_HD = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idHD);
@@ -164,7 +175,6 @@ public class HoaDonDao {
                 int idCTSP = rs.getInt("ID_CTSP");
                 int soLuongTra = rs.getInt("SoLuong");
 
-                // Lấy lại số lượng hiện tại
                 int soLuongHienTai = ctspDao.getSoLuongById(idCTSP);
                 int soLuongMoi = soLuongHienTai + soLuongTra;
 
@@ -172,7 +182,7 @@ public class HoaDonDao {
                 ctsp.setIdCTSP(idCTSP);
                 ctsp.setSoLuong(soLuongMoi);
 
-                ctspDao.updateSoLuongVaGiaTien(ctsp);
+                ctspDao.updateSoLuong(ctsp);
 
                 if (soLuongMoi > 0) {
                     ctspDao.updateTrangThaiConHang(idCTSP);
@@ -184,11 +194,12 @@ public class HoaDonDao {
     }
 
     public ThongKe thongKeTheoKhoangNgay(LocalDate tuNgay, LocalDate denNgay) {
+        System.out.println("→ Gọi phương thức: thongKeTheoKhoangNgay()");
         String sql = """
-        SELECT COUNT(*) AS SoLuongHD, SUM(ThanhTien) AS TongTien
-        FROM HoaDon
-        WHERE NgayTao >= ? AND NgayTao <= ? AND TrangThai = 1
-    """;
+            SELECT COUNT(*) AS SoLuongHD, SUM(ThanhTien) AS TongTien
+            FROM HoaDon
+            WHERE NgayTao >= ? AND NgayTao <= ? AND TrangThai = 1
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setDate(1, java.sql.Date.valueOf(tuNgay));
@@ -196,26 +207,24 @@ public class HoaDonDao {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                int soHoaDon = rs.getInt("SoLuongHD");
-                double tongTien = rs.getDouble("TongTien");
-                return new ThongKe(soHoaDon, tongTien);
+                return new ThongKe(rs.getInt("SoLuongHD"), rs.getDouble("TongTien"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return new ThongKe(0, 0);
     }
 
     public Map<String, Double> getDoanhThuTheoTungThangTrongNam() {
+        System.out.println("→ Gọi phương thức: getDoanhThuTheoTungThangTrongNam()");
         Map<String, Double> data = new LinkedHashMap<>();
         String sql = """
-        SELECT FORMAT(NgayTao, 'MM/yyyy') AS Thang, SUM(ThanhTien) AS TongTien
-        FROM HoaDon
-        WHERE NgayTao >= DATEADD(MONTH, -11, GETDATE()) AND TrangThai = 1
-        GROUP BY FORMAT(NgayTao, 'MM/yyyy')
-        ORDER BY Thang
-    """;
+            SELECT FORMAT(NgayTao, 'MM/yyyy') AS Thang, SUM(ThanhTien) AS TongTien
+            FROM HoaDon
+            WHERE NgayTao >= DATEADD(MONTH, -11, GETDATE()) AND TrangThai = 1
+            GROUP BY FORMAT(NgayTao, 'MM/yyyy')
+            ORDER BY Thang
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -227,13 +236,14 @@ public class HoaDonDao {
         return data;
     }
 
-    public ThongKe thongKeTheoNhanVienVaKhoangNgay(int idNV, LocalDate tuNgay, LocalDate denNgay) throws Exception {
+    public ThongKe thongKeTheoNhanVienVaKhoangNgay(int idNV, LocalDate tuNgay, LocalDate denNgay) {
+        System.out.println("→ Gọi phương thức: thongKeTheoNhanVienVaKhoangNgay() với ID_NV = " + idNV);
         String sql = """
-        SELECT COUNT(*) AS SoHoaDon, SUM(ThanhTien) AS TongDoanhThu
-        FROM HoaDon
-        WHERE ID_NV = ? AND NgayTao BETWEEN ? AND ?
-    """;
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            SELECT COUNT(*) AS SoHoaDon, SUM(ThanhTien) AS TongDoanhThu
+            FROM HoaDon
+            WHERE ID_NV = ? AND NgayTao BETWEEN ? AND ?
+        """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idNV);
             ps.setDate(2, Date.valueOf(tuNgay));
             ps.setDate(3, Date.valueOf(denNgay));
@@ -241,8 +251,9 @@ public class HoaDonDao {
             if (rs.next()) {
                 return new ThongKe(rs.getInt("SoHoaDon"), rs.getDouble("TongDoanhThu"));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return new ThongKe(0, 0);
     }
-
 }

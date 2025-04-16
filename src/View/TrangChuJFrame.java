@@ -32,10 +32,8 @@ public class TrangChuJFrame extends javax.swing.JFrame {
         setLocationRelativeTo(this);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         isLogin();
-
-        // Sau khi khởi tạo UI xong thì chuyển focus khỏi txtTenNV
         SwingUtilities.invokeLater(() -> {
-            jLabel6.requestFocusInWindow(); // focus vào nút khác hoặc JPanel
+            jLabel6.requestFocusInWindow();
         });
         showPanel(new SanPhamPanel(this, rootPaneCheckingEnabled));
     }
@@ -47,11 +45,42 @@ public class TrangChuJFrame extends javax.swing.JFrame {
             NhanVien nhanVien = SessionLogin.getNhanVienLogin();
             txtTenNV.setText(nhanVien.getHoTenNV());
             txtTenCV.setText(nhanVien.isRole() == true ? "Quản Lý" : "Nhân Viên");
-            // Nếu là nhân viên (role = false), ẩn nút quản lý nhân viên
             if (!nhanVien.isRole()) {
-                btnNV.setVisible(false); // hoặc setEnabled(false);
+                btnNV.setVisible(false);
             } else {
                 btnNV.setVisible(true);
+            }
+        }
+    }
+
+    private void showPanel(JPanel panel) {
+        childPanel = panel;
+        panelMain.removeAll();
+        panelMain.add(panel);
+        panelMain.validate();
+    }
+
+    private void performLogout() {
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                "Bạn có chắc chắn muốn đăng xuất không?",
+                "Xác nhận đăng xuất",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        if (choice == JOptionPane.YES_OPTION) {
+            SessionLogin.logout();
+            dispose();
+            try {
+                new DangNhapJFrame().setVisible(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Không thể mở màn hình đăng nhập:\n" + ex.getMessage(),
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }
@@ -287,78 +316,47 @@ public class TrangChuJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSanPhamActionPerformed
-        // TODO add your handling code here:
         try {
             showPanel(new SanPhamPanel(this, rootPaneCheckingEnabled));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("List San pham");
         }
     }//GEN-LAST:event_btnSanPhamActionPerformed
 
     private void btnNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNVActionPerformed
-        // TODO add your handling code here:
         try {
             showPanel(new NhanVienPanel(this, rootPaneCheckingEnabled));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("List Nhan Vien");
         }
     }//GEN-LAST:event_btnNVActionPerformed
 
     private void btnKHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKHActionPerformed
-        // TODO add your handling code here:
         try {
             showPanel(new KhachHangPanel(this, rootPaneCheckingEnabled));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Khách");
         }
     }//GEN-LAST:event_btnKHActionPerformed
 
     private void btnDangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangXuatActionPerformed
-        // TODO add your handling code here:
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Bạn có chắc chắn muốn đăng xuất không?",
-                "Xác nhận đăng xuất",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            SessionLogin.logout(); // Log out the user
-            this.dispose(); // Close the current frame
-
-            try {
-                new DangNhapJFrame().setVisible(true); // Open the login frame
-            } catch (Exception ex) {
-                ex.printStackTrace(); // It's good practice to handle the exception
-            }
-        }
-
-
+        performLogout();
     }//GEN-LAST:event_btnDangXuatActionPerformed
 
     private void btnThongKeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThongKeActionPerformed
-        // TODO add your handling code here:
         try {
             showPanel(new ThongKePanel(this, rootPaneCheckingEnabled));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("List Nhan Vien");
         }
     }//GEN-LAST:event_btnThongKeActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
         try {
             showPanel(new HoaDonPanel(this, rootPaneCheckingEnabled));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("List Nhan Vien");
         }
-
-
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void txtTenNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenNVActionPerformed
@@ -368,13 +366,6 @@ public class TrangChuJFrame extends javax.swing.JFrame {
     private void txtTenCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenCVActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTenCVActionPerformed
-    private void showPanel(JPanel panel) {
-        childPanel = panel;
-        panelMain.removeAll();
-        panelMain.add(panel);
-        panelMain.validate();
-    }
-
     /**
      * @param args the command line arguments
      */

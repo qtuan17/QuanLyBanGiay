@@ -28,22 +28,25 @@ public class ChiTietSanPhamDao {
     }
 
     public List<ChiTietSanPhamView> findAll() {
+        System.out.println("→ Gọi phương thức: findAll() - Lấy danh sách tất cả chi tiết sản phẩm");
         List<ChiTietSanPhamView> chiTietSanPhams = new ArrayList<>();
-        String sql = "SELECT \n"
-                + "    ctsp.ID_CTSP, \n"
-                + "    sp.MaGiay, \n"
-                + "    sp.TenGiay, \n"
-                + "    l.TenLoai,\n"
-                + "    m.TenMau,\n"
-                + "    s.TenSize,\n"
-                + "    ctsp.SoLuong, \n"
-                + "    ctsp.GiaTien,\n"
-                + "    ctsp.TrangThai\n"
-                + "FROM ChiTietSanPham ctsp\n"
-                + "JOIN SanPham sp ON ctsp.ID_SP = sp.ID_SP\n"
-                + "JOIN Loai l ON l.ID_Loai = sp.ID_Loai\n"
-                + "JOIN Mau m ON m.ID_Mau = ctsp.ID_Mau\n"
-                + "JOIN Size s ON s.ID_Size = ctsp.ID_Size;";
+        String sql = """
+            SELECT 
+                ctsp.ID_CTSP, 
+                sp.MaGiay, 
+                sp.TenGiay, 
+                l.TenLoai,
+                m.TenMau,
+                s.TenSize,
+                ctsp.SoLuong, 
+                ctsp.GiaTien,
+                ctsp.TrangThai
+            FROM ChiTietSanPham ctsp
+            JOIN SanPham sp ON ctsp.ID_SP = sp.ID_SP
+            JOIN Loai l ON l.ID_Loai = sp.ID_Loai
+            JOIN Mau m ON m.ID_Mau = ctsp.ID_Mau
+            JOIN Size s ON s.ID_Size = ctsp.ID_Size
+        """;
         try {
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
@@ -52,7 +55,6 @@ public class ChiTietSanPhamDao {
                 int idCTSP = resultSet.getInt(1);
                 int soLuong = resultSet.getInt(7);
 
-                // ✅ Luôn đồng bộ trạng thái với số lượng
                 updateTrangThaiTheoSoLuong(idCTSP);
 
                 ChiTietSanPhamView ctsp = new ChiTietSanPhamView(
@@ -63,12 +65,11 @@ public class ChiTietSanPhamDao {
                         resultSet.getString(5),
                         resultSet.getString(6),
                         soLuong,
-                        resultSet.getInt(8), // GiaTien
-                        resultSet.getInt(9) // TrangThai
+                        resultSet.getInt(8),
+                        resultSet.getInt(9)
                 );
                 chiTietSanPhams.add(ctsp);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,6 +77,7 @@ public class ChiTietSanPhamDao {
     }
 
     public boolean addChiTietSanPham(ChiTietSanPham chiTietSanPham) {
+        System.out.println("→ Gọi phương thức: addChiTietSanPham() - Thêm hoặc cập nhật chi tiết sản phẩm");
         try {
             String checkSql = "SELECT ID_CTSP, SoLuong FROM ChiTietSanPham WHERE ID_SP = ? AND ID_Mau = ? AND ID_Size = ?";
             PreparedStatement checkStmt = connection.prepareStatement(checkSql);
@@ -92,7 +94,6 @@ public class ChiTietSanPhamDao {
                 chiTietSanPham.setIdCTSP(idCTSP);
                 chiTietSanPham.setSoLuong(newSoLuong);
 
-                // ✅ Gọi hàm cập nhật cả số lượng và giá tiền
                 return updateSoLuongVaGiaTien(chiTietSanPham) > 0;
             } else {
                 String insertSql = "INSERT INTO ChiTietSanPham (ID_SP, ID_Mau, ID_Size, SoLuong, GiaTien, TrangThai) VALUES (?, ?, ?, ?, ?, 1)";
@@ -111,6 +112,7 @@ public class ChiTietSanPhamDao {
     }
 
     public int updateSoLuongVaGiaTien(ChiTietSanPham chiTietSanPham) {
+        System.out.println("→ Gọi phương thức: updateSoLuongVaGiaTien()");
         String sql = "UPDATE ChiTietSanPham SET SoLuong = ?, GiaTien = ? WHERE ID_CTSP = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chiTietSanPham.getSoLuong());
@@ -123,7 +125,21 @@ public class ChiTietSanPhamDao {
         }
     }
 
+    public int updateSoLuong(ChiTietSanPham chiTietSanPham) {
+        System.out.println("→ Gọi phương thức: updateSoLuong()");
+        String sql = "UPDATE ChiTietSanPham SET SoLuong = ? WHERE ID_CTSP = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, chiTietSanPham.getSoLuong());
+            ps.setInt(2, chiTietSanPham.getIdCTSP());
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     public int getSoLuongById(int idCTSP) {
+        System.out.println("→ Gọi phương thức: getSoLuongById() với ID_CTSP = " + idCTSP);
         String sql = "SELECT SoLuong FROM ChiTietSanPham WHERE ID_CTSP = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idCTSP);
@@ -134,10 +150,11 @@ public class ChiTietSanPhamDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Trả về -1 nếu có lỗi hoặc không tìm thấy
+        return -1;
     }
 
     public boolean updateTrangThaiTheoSoLuong(int idCTSP) {
+        System.out.println("→ Gọi phương thức: updateTrangThaiTheoSoLuong() với ID_CTSP = " + idCTSP);
         String selectSql = "SELECT SoLuong FROM ChiTietSanPham WHERE ID_CTSP = ?";
         String updateSql = "UPDATE ChiTietSanPham SET TrangThai = ? WHERE ID_CTSP = ?";
 
@@ -162,6 +179,7 @@ public class ChiTietSanPhamDao {
     }
 
     public void updateTrangThaiConHang(int idCTSP) {
+        System.out.println("→ Gọi phương thức: updateTrangThaiConHang() với ID_CTSP = " + idCTSP);
         String sql = "UPDATE ChiTietSanPham SET TrangThai = 1 WHERE ID_CTSP = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idCTSP);
@@ -172,6 +190,7 @@ public class ChiTietSanPhamDao {
     }
 
     public ChiTietSanPham findBySP_Mau_Size(int idSP, int idMau, int idSize) {
+        System.out.println("→ Gọi phương thức: findBySP_Mau_Size() với SP = " + idSP + ", Mau = " + idMau + ", Size = " + idSize);
         String sql = "SELECT ID_CTSP, SoLuong, GiaTien, TrangThai FROM ChiTietSanPham WHERE ID_SP = ? AND ID_Mau = ? AND ID_Size = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idSP);
@@ -192,7 +211,7 @@ public class ChiTietSanPhamDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Không tồn tại
+        return null;
     }
 
 }

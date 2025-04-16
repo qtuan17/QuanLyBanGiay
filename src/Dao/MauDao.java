@@ -17,6 +17,7 @@ import java.util.List;
  * @author tuanb
  */
 public class MauDao {
+
     public PreparedStatement preparedStatement = null;
     public ResultSet resultSet = null;
     public Connection connection = null;
@@ -25,7 +26,8 @@ public class MauDao {
         connection = util.DBContext.getConnection();
     }
 
-    public List<Mau> findAll() {
+    public List<Mau> findAllMau() {
+        System.out.println("→ Gọi phương thức: findAllMau() - Lấy danh sách tất cả màu");
         List<Mau> maus = new ArrayList<>();
         String sql = "SELECT * FROM Mau";
         try {
@@ -44,10 +46,11 @@ public class MauDao {
         }
         return maus;
     }
+
     public int create(Mau mau) {
+        System.out.println("→ Gọi phương thức: create() - Thêm màu mới: " + mau.getTenMau());
         int rowedit = 0;
-        String sql = "INSERT INTO Mau (TenMau, TrangThai) VALUES \n"
-                + "(?, 1)";
+        String sql = "INSERT INTO Mau (TenMau, TrangThai) VALUES (?, 1)";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, mau.getTenMau());
@@ -56,11 +59,12 @@ public class MauDao {
             e.printStackTrace();
         }
         return rowedit;
-
     }
+
     public int update(Mau mau) {
+        System.out.println("→ Gọi phương thức: update() - Cập nhật tên màu ID = " + mau.getIdMau());
         int rowedit = 0;
-        String sql = "UPDATE Mau set TenMau = ? WHERE ID_Mau = ?";
+        String sql = "UPDATE Mau SET TenMau = ? WHERE ID_Mau = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, mau.getTenMau());
@@ -71,9 +75,11 @@ public class MauDao {
         }
         return rowedit;
     }
+
     public int delete(Mau mau) {
+        System.out.println("→ Gọi phương thức: delete() - Ẩn màu ID = " + mau.getIdMau());
         int rowedit = 0;
-        String sql = "UPDATE Mau set trangthai = ? WHERE ID_Mau = ?";
+        String sql = "UPDATE Mau SET TrangThai = ? WHERE ID_Mau = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 0);
@@ -84,9 +90,11 @@ public class MauDao {
         }
         return rowedit;
     }
+
     public int khoiphuc(Mau mau) {
+        System.out.println("→ Gọi phương thức: khoiphuc() - Khôi phục màu ID = " + mau.getIdMau());
         int khoiphuc = 0;
-        String sql = "UPDATE Mau set trangthai = ? WHERE ID_Mau = ?";
+        String sql = "UPDATE Mau SET TrangThai = ? WHERE ID_Mau = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, 1);
@@ -97,5 +105,4 @@ public class MauDao {
         }
         return khoiphuc;
     }
-
 }

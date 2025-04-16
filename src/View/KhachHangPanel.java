@@ -30,28 +30,21 @@ public class KhachHangPanel extends javax.swing.JPanel {
         initComponents();
         khachHangDao = new KhachHangDao();
         fillTableKhachHang();
-
     }
 
     void fillTableKhachHang() {
-        DefaultTableModel modelNV = new DefaultTableModel();
-        modelNV = (DefaultTableModel) tblKH.getModel();
+        DefaultTableModel modelNV = (DefaultTableModel) tblKH.getModel();
         modelNV.setRowCount(0);
         try {
             List<KhachHang> khachHangs = khachHangDao.findAll();
-            if (khachHangs.isEmpty()) {
-
-            }
-            for (KhachHang khachHang : khachHangs) {
-                Object[] row = {
-                    khachHang.getIdKH(),
-                    khachHang.getHoTenKH(),
-                    khachHang.getSdt(),
-                    khachHang.getDiaChi(),
-                    khachHang.getTrangThai() == 1 ? "Tồn tại" : "Không tồn tại"
-
-                };
-                modelNV.addRow(row);
+            for (KhachHang kh : khachHangs) {
+                modelNV.addRow(new Object[]{
+                    kh.getIdKH(),
+                    kh.getHoTenKH(),
+                    kh.getSdt(),
+                    kh.getDiaChi(),
+                    kh.getTrangThai() == 1 ? "Tồn tại" : "Không tồn tại"
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,44 +52,31 @@ public class KhachHangPanel extends javax.swing.JPanel {
     }
 
     private void timKiemKhachHang() {
-
         final String keyword = txt_timkiem.getText().trim().toLowerCase();
         final String keywordNoAccent = removeDiacritics(keyword);
-
         DefaultTableModel model = (DefaultTableModel) tblKH.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         tblKH.setRowSorter(sorter);
-        if (keyword.length() == 0) {
-            sorter.setRowFilter(null); // Show all rows if keyword is empty
-        } else {
-            // Create a custom RowFilter that compares the text after removing accents
-            sorter.setRowFilter(new RowFilter<DefaultTableModel, Integer>() {
-                @Override
-                public boolean include(RowFilter.Entry<? extends DefaultTableModel, ? extends Integer> entry) {
-                    int columnCount = entry.getValueCount();
-
-                    // Iterate through each column for the current row
-                    for (int i = 0; i < columnCount; i++) {
-                        Object value = entry.getValue(i);
-                        if (value != null) {
-                            // Convert cell text to lowercase and remove diacritics
-                            String cellText = removeDiacritics(value.toString().toLowerCase());
-                            if (cellText.contains(keywordNoAccent)) {
-                                return true;
-                            }
+        sorter.setRowFilter(keyword.isEmpty() ? null : new RowFilter<>() {
+            @Override
+            public boolean include(RowFilter.Entry<? extends DefaultTableModel, ? extends Integer> entry) {
+                for (int i = 0; i < entry.getValueCount(); i++) {
+                    Object value = entry.getValue(i);
+                    if (value != null) {
+                        String cellText = removeDiacritics(value.toString().toLowerCase());
+                        if (cellText.contains(keywordNoAccent)) {
+                            return true;
                         }
                     }
-                    return false;
                 }
-            });
-        }
+                return false;
+            }
+        });
     }
 
-    // Xóa dấu phụ để tìm kiếm sản phẩm
     private String removeDiacritics(String input) {
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(normalized).replaceAll("");
+        return Pattern.compile("\\p{InCombiningDiacriticalMarks}+").matcher(normalized).replaceAll("");
     }
 
     /**
