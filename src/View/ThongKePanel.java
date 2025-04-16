@@ -5,6 +5,8 @@
 package View;
 
 import Dao.HoaDonDao;
+import Dao.NhanVienDao;
+import Model.NhanVien;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,6 +15,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,6 +45,8 @@ public class ThongKePanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblSoHoaDonValue, lblTongDoanhThuValue;
     private JLabel lblTuNgayValue;
     private JLabel lblDenNgayValue;
+    private javax.swing.JComboBox<String> cbxNhanVien;
+    private List<NhanVien> danhSachNhanVien;
 
     private void buildThongKeUI() throws Exception {
         // ComboBox chọn số tháng
@@ -56,14 +62,16 @@ public class ThongKePanel extends javax.swing.JPanel {
         btnThongKe.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         // Các label kết quả
-        JLabel lblSoHoaDon = new JLabel("🧾 Số lượng hóa đơn:");
+        JLabel lblSoHoaDon = new JLabel("Số lượng hóa đơn:");
         lblSoHoaDon.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        
         lblSoHoaDonValue = new JLabel("0");
         lblSoHoaDonValue.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblSoHoaDonValue.setForeground(new Color(25, 118, 210));
 
-        JLabel lblTongDoanhThu = new JLabel("💰 Tổng doanh thu:");
+        JLabel lblTongDoanhThu = new JLabel("Tổng doanh thu:");
         lblTongDoanhThu.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        
         lblTongDoanhThuValue = new JLabel("0 VNĐ");
         lblTongDoanhThuValue.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTongDoanhThuValue.setForeground(new Color(46, 125, 50));
@@ -74,6 +82,12 @@ public class ThongKePanel extends javax.swing.JPanel {
 
         lblDenNgayValue = new JLabel("-");
         lblDenNgayValue.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        // tạo cbb chứa nhân viên cần lọc
+        cbxNhanVien = new JComboBox<>();
+        danhSachNhanVien = new ArrayList<>();
+        NhanVienDao nvDao = new NhanVienDao();
+        danhSachNhanVien = nvDao.findAll();
 
         // Tạo panel chứa nội dung thống kê
         JPanel panelNoiDung = new JPanel();
@@ -94,10 +108,19 @@ public class ThongKePanel extends javax.swing.JPanel {
         panelNoiDung.add(lblSoHoaDonValue);
         panelNoiDung.add(lblTongDoanhThu);
         panelNoiDung.add(lblTongDoanhThuValue);
+        
         panelNoiDung.add(new JLabel("📅 Từ ngày:"));
-        panelNoiDung.add(lblTuNgayValue);
         panelNoiDung.add(new JLabel("📅 Đến ngày:"));
         panelNoiDung.add(lblDenNgayValue);
+        panelNoiDung.add(lblTuNgayValue);
+
+        panelNoiDung.add(new JLabel("👤 Chọn nhân viên:"));
+        panelNoiDung.add(cbxNhanVien);
+
+        cbxNhanVien.addItem("Tất cả nhân viên");
+        for (NhanVien nv : danhSachNhanVien) {
+            cbxNhanVien.addItem(nv.getHoTenNV());
+        }
 
         // Panel biểu đồ bên phải
         ChartPanel chartPanel = createChartPanel();
@@ -111,12 +134,61 @@ public class ThongKePanel extends javax.swing.JPanel {
         container.setBackground(new Color(240, 240, 240));
         container.add(panelNoiDung);
         container.add(chartPanel);
-
         jPanel3.setLayout(new BorderLayout());
         jPanel3.removeAll();
         jPanel3.add(container, BorderLayout.CENTER);
         jPanel3.revalidate();
         jPanel3.repaint();
+        btnThongKe.addActionListener(e -> {
+            int soThang = switch (cbxThang.getSelectedIndex()) {
+                case 0 ->
+                    3;
+                case 1 ->
+                    6;
+                case 2 ->
+                    9;
+                case 3 ->
+                    12;
+                default ->
+                    3;
+            };
+
+            try {
+                LocalDate startDate = LocalDate.now();
+                LocalDate endDate = startDate.plusMonths(soThang);
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                lblTuNgayValue.setText(startDate.format(formatter));
+                lblDenNgayValue.setText(endDate.format(formatter));
+
+                String tenNhanVien = cbxNhanVien.getSelectedItem().toString();
+                Integer idNhanVien = null;
+
+                if (!tenNhanVien.equals("Tất cả nhân viên")) {
+                    for (NhanVien nv : danhSachNhanVien) {
+                        if (nv.getHoTenNV().equals(tenNhanVien)) {
+                            idNhanVien = nv.getIdNV();
+                            break;
+                        }
+                    }
+                }
+
+                HoaDonDao dao = new HoaDonDao();
+                ThongKe thongKe;
+
+                if (idNhanVien == null) {
+                    thongKe = dao.thongKeTheoKhoangNgay(startDate, endDate); // Hàm có sẵn
+                } else {
+                    thongKe = dao.thongKeTheoNhanVienVaKhoangNgay(idNhanVien, startDate, endDate);
+                }
+
+                lblSoHoaDonValue.setText(String.valueOf(thongKe.getSoHoaDon()));
+                lblTongDoanhThuValue.setText(String.format("%,.0f VNĐ", thongKe.getTongDoanhThu()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Lỗi thống kê: " + ex.getMessage());
+            }
+        });
 
         // Action Thống kê
         btnThongKe.addActionListener(e -> {

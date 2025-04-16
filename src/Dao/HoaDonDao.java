@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import util.DBContext;
 import viewModel.HoaDonView;
 import viewModel.ThongKe;
 
@@ -224,6 +225,24 @@ public class HoaDonDao {
             e.printStackTrace();
         }
         return data;
+    }
+
+    public ThongKe thongKeTheoNhanVienVaKhoangNgay(int idNV, LocalDate tuNgay, LocalDate denNgay) throws Exception {
+        String sql = """
+        SELECT COUNT(*) AS SoHoaDon, SUM(ThanhTien) AS TongDoanhThu
+        FROM HoaDon
+        WHERE ID_NV = ? AND NgayTao BETWEEN ? AND ?
+    """;
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idNV);
+            ps.setDate(2, Date.valueOf(tuNgay));
+            ps.setDate(3, Date.valueOf(denNgay));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new ThongKe(rs.getInt("SoHoaDon"), rs.getDouble("TongDoanhThu"));
+            }
+        }
+        return new ThongKe(0, 0);
     }
 
 }
