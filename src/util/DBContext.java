@@ -1,5 +1,8 @@
 package util;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -19,7 +22,7 @@ public class DBContext {
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "123";
     private static final String SERVER = "localhost";
-    private static final String PORT = "1433";
+    private static final String PORT = "143";
     private static final String DATABASE_NAME = "SHOSE_SHOP_VER2";
     private static final boolean USING_SSL = true;
 
@@ -52,13 +55,48 @@ public class DBContext {
         }
     }
 
+    /**
+     * Kiểm tra nhanh khả năng kết nối tới máy chủ (chưa cần xác thực DB).
+     *
+     * @param timeoutMillis thời gian chờ (ms)
+     * @return true nếu port TCP mở, false nếu không
+     */
+    public static boolean isServerReachable(int timeoutMillis) {
+        try (Socket socket = new Socket()) {
+            socket.connect(
+                    new InetSocketAddress(SERVER, Integer.parseInt(PORT)),
+                    timeoutMillis
+            );
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean isConnectedQuick() {
+        // chờ 200ms là đủ để biết có server phản hồi hay không
+        return isServerReachable(200);
+    }
+
     public static Connection getConnection() {
         try {
-            Connection conn = DriverManager.getConnection(CONNECT_STRING);
-            return conn;
+            return DriverManager.getConnection(CONNECT_STRING);
         } catch (SQLException ex) {
             System.err.println("Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Kiểm tra kết nối đến database.
+     *
+     * @return true nếu lấy được Connection, false nếu không
+     */
+    public static boolean isConnected() {
+        try (Connection conn = getConnection()) {
+            return conn != null;
+        } catch (Exception e) {
+            return false;
         }
     }
 
