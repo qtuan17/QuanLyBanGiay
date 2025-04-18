@@ -16,7 +16,6 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import util.DBContext;
 import util.SessionLogin;
 
 /**
@@ -25,9 +24,14 @@ import util.SessionLogin;
  */
 public class DangNhapJFrame extends JFrame {
 
-    private LoginDao loginDao;
+    private final LoginDao loginDao;
 
     public DangNhapJFrame() {
+        try {
+            loginDao = new LoginDao();
+        } catch (Exception e) {
+            throw new RuntimeException("Không khởi tạo được LoginDao", e);
+        }
         initComponents();
         setTitle("Đăng Nhập");
         setLocationRelativeTo(null);
@@ -58,43 +62,25 @@ public class DangNhapJFrame extends JFrame {
     }
 
     private void performLogin() {
-        // 0. Kiểm tra kết nối DB
-        if (!DBContext.isConnectedQuick()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Mất kết nối tới máy chủ",
-                    "Lỗi kết nối",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            System.exit(0);
-        }
-        // 1. Lấy dữ liệu đầu vào
         String username = txtUserName.getText().trim();
-        String password = new String(txtPassword.getPassword()).trim();
+        String password = String.valueOf(txtPassword.getPassword()).trim();
 
-        // 2. Validate
         if (username.isEmpty() || password.isEmpty()) {
-            showMessage("Tài khoản hoặc mật khẩu không được để trống",
-                    "Lỗi đăng nhập", JOptionPane.WARNING_MESSAGE);
+            showMessage("Tài khoản hoặc mật khẩu không được để trống", "Lỗi đăng nhập", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (username.length() < 5) {
-            showMessage("Tài khoản phải có ít nhất 5 ký tự",
-                    "Lỗi đăng nhập", JOptionPane.WARNING_MESSAGE);
+            showMessage("Tài khoản phải có ít nhất 5 ký tự", "Lỗi đăng nhập", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 3. Ghi nhớ nếu cần
         handleRememberMe(username, password);
 
-        // 4. Xác thực
         if (authenticate(username, password)) {
-            showMessage("Đăng nhập thành công!", "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
+            showMessage("Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             openMainFrame();
         } else {
-            showMessage("Tài khoản hoặc mật khẩu không đúng",
-                    "Lỗi đăng nhập", JOptionPane.ERROR_MESSAGE);
+            showMessage("Tài khoản hoặc mật khẩu không đúng", "Lỗi đăng nhập", JOptionPane.ERROR_MESSAGE);
         }
     }
 

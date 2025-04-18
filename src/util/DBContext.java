@@ -22,7 +22,7 @@ public class DBContext {
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "123";
     private static final String SERVER = "localhost";
-    private static final String PORT = "143";
+    private static final String PORT = "1433";
     private static final String DATABASE_NAME = "SHOSE_SHOP_VER2";
     private static final boolean USING_SSL = true;
 
