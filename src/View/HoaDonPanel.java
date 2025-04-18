@@ -217,7 +217,6 @@ public class HoaDonPanel extends javax.swing.JPanel {
             pnlHoaDon.add(valueLabel, gbc);
         }
         mainPanel.add(pnlHoaDon, BorderLayout.NORTH);
-
         DefaultTableModel modelCTHD = new DefaultTableModel(new String[]{"ID_CTSP", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền"}, 0);
         for (ChiTietHoaDon ct : listChiTiet) {
             modelCTHD.addRow(new Object[]{

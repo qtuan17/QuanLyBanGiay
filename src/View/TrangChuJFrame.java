@@ -36,8 +36,16 @@ public class TrangChuJFrame extends javax.swing.JFrame {
             jLabel6.requestFocusInWindow();
         });
         showPanel(new SanPhamPanel(this, rootPaneCheckingEnabled));
+        roleFunction();
     }
-
+    public void roleFunction(){
+        boolean isRoleAccout = SessionLogin.getNhanVienLogin().isRole();
+        // true = quản lí, false = nhân viên
+        if(!isRoleAccout){
+            btnNV.setEnabled(false);
+            // viết vào dòng này là ẩn
+        }
+    }
     public void isLogin() {
         if (!SessionLogin.isLogin()) {
             System.exit(0);

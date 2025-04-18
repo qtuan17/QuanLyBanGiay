@@ -77,9 +77,9 @@ public class HoaDonDao {
                 cthd.DonGia,
                 cthd.ThanhTien,
                 cthd.TrangThai
-            FROM SHOSE_SHOP_VER2.dbo.ChiTietHoaDon cthd
-            JOIN SHOSE_SHOP_VER2.dbo.ChiTietSanPham ctsp ON cthd.ID_CTSP = ctsp.ID_CTSP
-            JOIN SHOSE_SHOP_VER2.dbo.SanPham sp ON ctsp.ID_SP = sp.ID_SP
+            FROM ChiTietHoaDon cthd
+            JOIN ChiTietSanPham ctsp ON cthd.ID_CTSP = ctsp.ID_CTSP
+            JOIN SanPham sp ON ctsp.ID_SP = sp.ID_SP
             WHERE cthd.ID_HD = ?
         """;
 

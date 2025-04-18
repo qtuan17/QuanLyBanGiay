@@ -124,7 +124,18 @@ public class ChiTietSanPhamDao {
             return 0;
         }
     }
-
+    public int updateGiaTien(ChiTietSanPham chiTietSanPham) {
+        System.out.println("→ Gọi phương thức: updateGiaTien()");
+        String sql = "UPDATE ChiTietSanPham SET GiaTien = ? WHERE ID_CTSP = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDouble(1, chiTietSanPham.getGiaTien());
+            ps.setInt(2, chiTietSanPham.getIdCTSP());
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
     public int updateSoLuong(ChiTietSanPham chiTietSanPham) {
         System.out.println("→ Gọi phương thức: updateSoLuong()");
         String sql = "UPDATE ChiTietSanPham SET SoLuong = ? WHERE ID_CTSP = ?";

@@ -403,11 +403,22 @@ public class SanPhamPanel extends javax.swing.JPanel {
     }
 
     private ChiTietSanPham getFormCTSP() {
+        int idCTSP = -1;
         SanPham sanPham = (SanPham) cbbSanPham.getSelectedItem();
         Mau mau = (Mau) cbbColor.getSelectedItem();
         Size size = (Size) cbbSize.getSelectedItem();
-        int soLuong = Integer.parseInt(txtSoLuong.getText());
-        double giaTien = Double.parseDouble(txtGiaTien.getText());
+        int soLuong;
+        double giaTien;
+        try {
+            soLuong = Integer.parseInt(txtSoLuong.getText());
+        } catch (Exception e) {
+            soLuong  = -1;
+        }
+        try {
+            giaTien = Double.parseDouble(txtGiaTien.getText());
+        } catch (Exception e) {
+            giaTien = -1;
+        }
         ChiTietSanPham chiTietSanPham = new ChiTietSanPham(
                 sanPham.getIdSP(),
                 mau.getIdMau(),
@@ -415,15 +426,18 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 soLuong,
                 giaTien,
                 1);
+        if(!txt_idsp.equals("")){
+            chiTietSanPham.setIdCTSP(Integer.parseInt(txt_idsp.getText()));
+        }
         return chiTietSanPham;
     }
 
     private void themMoiSanPham() {
-        ChiTietSanPham chiTietSanPham = getFormCTSP();
+        ChiTietSanPham chiTietSanPham = Validator.ChitetSanPhamValidator.validateChiTietSanPham(getFormCTSP());
         if (chiTietSanPham == null) {
             return;
         }
-
+        
         ChiTietSanPham existed = chiTietSanPhamDao.findBySP_Mau_Size(
                 chiTietSanPham.getIdSP(),
                 chiTietSanPham.getIdMau(),
@@ -439,7 +453,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
             if (confirm == JOptionPane.YES_OPTION) {
                 int soLuongHienTai = existed.getSoLuong();
                 int soLuongMoi = chiTietSanPham.getSoLuong();
-
+                // cái đoạn này này, nếu thầy bảo sửa sl bé hơn sl trong kho thì ẩn đi
                 if (soLuongMoi < soLuongHienTai) {
                     JOptionPane.showMessageDialog(this,
                             "Số lượng nhập mới phải lớn hơn số lượng hiện tại (" + soLuongHienTai + ")!",
@@ -669,6 +683,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
         btnDeleteSP = new javax.swing.JButton();
         cbbSanPham = new javax.swing.JComboBox<>();
         btnThemSanPham = new javax.swing.JButton();
+        btnSuaGiaTien = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
@@ -794,13 +809,20 @@ public class SanPhamPanel extends javax.swing.JPanel {
             }
         });
 
+        btnSuaGiaTien.setText("Cập nhật giá tiền");
+        btnSuaGiaTien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaGiaTienActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 947, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 916, Short.MAX_VALUE))
+                .addGap(0, 918, Short.MAX_VALUE))
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel20)
@@ -823,11 +845,11 @@ public class SanPhamPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnDeleteSP)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(btnAddColor, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnAddSize, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnThemSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnAddColor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddSize, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .addComponent(btnThemSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSuaGiaTien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(1310, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
@@ -859,8 +881,9 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtGiaTien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel26))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                    .addComponent(jLabel26)
+                    .addComponent(btnSuaGiaTien, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddSP)
                     .addComponent(btnDeleteSP))
@@ -1480,6 +1503,31 @@ public class SanPhamPanel extends javax.swing.JPanel {
         setHoaDonCho();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void btnSuaGiaTienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaGiaTienActionPerformed
+        // TODO add your handling code here:
+        if(txt_idsp.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Vui Lòng chọn sản phẩm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        ChiTietSanPham chiTietSanPham = Validator.ChitetSanPhamValidator.validateChiTietSanPham(getFormCTSP());
+        System.out.println(chiTietSanPham.toString());
+        int confirm = JOptionPane.showConfirmDialog(this,
+                    "Bạn có chắc chắn muốn cập nhật giá?",
+                    "Cập nhật giá tiền",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                int isUpdatePrice = chiTietSanPhamDao.updateGiaTien(chiTietSanPham);
+                System.out.println(isUpdatePrice);
+                if (isUpdatePrice > 0) {
+                    fillTaleChiTietSP();
+                    JOptionPane.showMessageDialog(this, "Cập nhật giá tiền thành công!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Cập nhật giá tiền thất bại!");
+                }
+            }
+    }//GEN-LAST:event_btnSuaGiaTienActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddColor;
@@ -1488,6 +1536,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnDeleteSP;
     private javax.swing.JButton btnLamMoi1;
     private javax.swing.JButton btnLamMoiGioHang;
+    private javax.swing.JButton btnSuaGiaTien;
     private javax.swing.JButton btnSuaGioHang;
     private javax.swing.JButton btnTaoHoaDon1;
     private javax.swing.JButton btnThemSanPham;

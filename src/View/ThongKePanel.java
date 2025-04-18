@@ -111,8 +111,8 @@ public class ThongKePanel extends javax.swing.JPanel {
         
         panelNoiDung.add(new JLabel("📅 Từ ngày:"));
         panelNoiDung.add(new JLabel("📅 Đến ngày:"));
-        panelNoiDung.add(lblDenNgayValue);
         panelNoiDung.add(lblTuNgayValue);
+        panelNoiDung.add(lblDenNgayValue);
 
         panelNoiDung.add(new JLabel("👤 Chọn nhân viên:"));
         panelNoiDung.add(cbxNhanVien);
@@ -154,8 +154,8 @@ public class ThongKePanel extends javax.swing.JPanel {
             };
 
             try {
-                LocalDate startDate = LocalDate.now();
-                LocalDate endDate = startDate.plusMonths(soThang);
+                LocalDate endDate = LocalDate.now();
+                LocalDate startDate = endDate.minusMonths(soThang);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 lblTuNgayValue.setText(startDate.format(formatter));
@@ -207,8 +207,8 @@ public class ThongKePanel extends javax.swing.JPanel {
 
             try {
                 // Ngày bắt đầu và kết thúc
-                LocalDate startDate = LocalDate.now();
-                LocalDate endDate = startDate.plusMonths(soThang);
+                LocalDate endDate = LocalDate.now();
+                LocalDate startDate = endDate.minusMonths(soThang);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 lblTuNgayValue.setText(startDate.format(formatter));
