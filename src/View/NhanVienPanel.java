@@ -252,21 +252,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_NhanVien = new javax.swing.JScrollPane();
         tblNV = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        txtIDCV = new javax.swing.JTextField();
-        txtTenCV = new javax.swing.JTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblChucVu = new javax.swing.JTable();
-        jLabel13 = new javax.swing.JLabel();
-        txtMoTa = new javax.swing.JTextField();
-        btnAddCV = new javax.swing.JButton();
-        btnEditCV = new javax.swing.JButton();
-        btnDeleteCV = new javax.swing.JButton();
-        btnKhoiPhucCV = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -328,6 +313,11 @@ public class NhanVienPanel extends javax.swing.JPanel {
         btnDeleteNV.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnDeleteNV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete.png"))); // NOI18N
         btnDeleteNV.setText("Xóa");
+        btnDeleteNV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteNVActionPerformed(evt);
+            }
+        });
 
         btnKhoiPhuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh-arrow.png"))); // NOI18N
         btnKhoiPhuc.setText("Khôi Phục");
@@ -435,131 +425,6 @@ public class NhanVienPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Nhân Viên", jPanel1);
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setForeground(new java.awt.Color(51, 51, 51));
-
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel11.setText("ID");
-
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel12.setText("Tên Chức Vụ");
-
-        txtIDCV.setEditable(false);
-
-        tblChucVu.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "ID", "Tên Chức Vụ", "Mô Tả ", "Trạng Thái"
-            }
-        ));
-        jScrollPane2.setViewportView(tblChucVu);
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel13.setText("Mô Tả");
-
-        btnAddCV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/plus.png"))); // NOI18N
-        btnAddCV.setText("Thêm");
-        btnAddCV.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddCVActionPerformed(evt);
-            }
-        });
-
-        btnEditCV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit.png"))); // NOI18N
-        btnEditCV.setText("Sửa ");
-
-        btnDeleteCV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete.png"))); // NOI18N
-        btnDeleteCV.setText("Xóa");
-
-        btnKhoiPhucCV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh-arrow.png"))); // NOI18N
-        btnKhoiPhucCV.setText("Khôi phục");
-        btnKhoiPhucCV.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnKhoiPhucCVActionPerformed(evt);
-            }
-        });
-
-        jTextField1.setEditable(false);
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel14.setText("Trạng Thái");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(jLabel11))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtMoTa)
-                                    .addComponent(txtIDCV)
-                                    .addComponent(txtTenCV)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(btnAddCV)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnEditCV)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnDeleteCV)))
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnKhoiPhucCV))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(154, 154, 154)
-                                        .addComponent(jLabel14)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtIDCV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel14)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel12)
-                    .addComponent(txtTenCV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel13)
-                    .addComponent(txtMoTa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddCV)
-                    .addComponent(btnEditCV)
-                    .addComponent(btnDeleteCV)
-                    .addComponent(btnKhoiPhucCV))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 237, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Chức Vụ", jPanel2);
-
         jLabel2.setBackground(new java.awt.Color(0, 0, 0));
         jLabel2.setFont(new java.awt.Font("Calibri Light", 1, 48)); // NOI18N
         jLabel2.setText("                     Quản Lí Nhân Viên");
@@ -568,7 +433,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 949, Short.MAX_VALUE)
+            .addGap(0, 951, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -606,21 +471,9 @@ public class NhanVienPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnKhoiPhucCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKhoiPhucCVActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnKhoiPhucCVActionPerformed
-
-    private void btnAddCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCVActionPerformed
-
-    }//GEN-LAST:event_btnAddCVActionPerformed
-
     private void jPanel1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPanel1AncestorAdded
         // TODO add your handling code here:
     }//GEN-LAST:event_jPanel1AncestorAdded
-
-    private void btnAddNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNVActionPerformed
-        taoMoiNhanVien();
-    }//GEN-LAST:event_btnAddNVActionPerformed
 
     private void tbl_NhanVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_NhanVienMouseClicked
 
@@ -635,21 +488,21 @@ public class NhanVienPanel extends javax.swing.JPanel {
         suaNhanVien();
     }//GEN-LAST:event_btnEditNVActionPerformed
 
+    private void btnAddNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNVActionPerformed
+        taoMoiNhanVien();
+    }//GEN-LAST:event_btnAddNVActionPerformed
+
+    private void btnDeleteNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteNVActionPerformed
+        // TODO add your handling code here :
+    }//GEN-LAST:event_btnDeleteNVActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAddCV;
     private javax.swing.JButton btnAddNV;
-    private javax.swing.JButton btnDeleteCV;
     private javax.swing.JButton btnDeleteNV;
-    private javax.swing.JButton btnEditCV;
     private javax.swing.JButton btnEditNV;
     private javax.swing.JButton btnKhoiPhuc;
-    private javax.swing.JButton btnKhoiPhucCV;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
@@ -657,23 +510,16 @@ public class NhanVienPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTable tblChucVu;
     private javax.swing.JTable tblNV;
     private javax.swing.JScrollPane tbl_NhanVien;
     private javax.swing.JTextField txtDiaChi;
     private javax.swing.JTextField txtHoTen;
     private javax.swing.JTextField txtID;
-    private javax.swing.JTextField txtIDCV;
     private javax.swing.JTextField txtMatKhau;
-    private javax.swing.JTextField txtMoTa;
     private javax.swing.JTextField txtNgaySinh;
     private javax.swing.JTextField txtTaiKhoan;
-    private javax.swing.JTextField txtTenCV;
     // End of variables declaration//GEN-END:variables
 }

@@ -64,7 +64,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
         fillAllCombo();
     }
 
-    // 1. Phương thức generic để điền JComboBox
+
     private <E> void fillCombo(JComboBox<E> combo, List<E> items, Predicate<E> filter) {
         DefaultComboBoxModel<E> model = (DefaultComboBoxModel<E>) combo.getModel();
         model.removeAllElements();
@@ -73,14 +73,14 @@ public class SanPhamPanel extends javax.swing.JPanel {
                 .forEach(model::addElement);
     }
 
-// 2. Sử dụng fillCombo cho cả 3 cbb
+
     public void fillAllCombo() {
         fillCombo(cbbColor, mauDao.findAllMau(), m -> m.getTrangThai() == 1);
         fillCombo(cbbSize, sizeDao.findAllSize(), s -> s.getTrangThai() == 1);
         fillCombo(cbbSanPham, sanPhamDao.findAllSanPham(), p -> p.getTrangThai() == 1);
     }
 
-// 3. Tối giản fillTaleChiTietSP chỉ 1 vòng lặp
+
     void fillTaleChiTietSP() {
         DefaultTableModel bhModel = (DefaultTableModel) tblSanPham.getModel();
         DefaultTableModel spModel = (DefaultTableModel) tblSP.getModel();
@@ -105,7 +105,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
         }
     }
 
-// 4. Tối giản fillTaleHoaDon với Stream API
+
     void fillTaleHoaDon() {
         DefaultTableModel model = (DefaultTableModel) tblHoaDon.getModel();
         model.setRowCount(0);
@@ -453,7 +453,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
             if (confirm == JOptionPane.YES_OPTION) {
                 int soLuongHienTai = existed.getSoLuong();
                 int soLuongMoi = chiTietSanPham.getSoLuong();
-                // cái đoạn này này, nếu thầy bảo sửa sl bé hơn sl trong kho thì ẩn đi
+                //nếu sửa sl bé hơn sl trong kho thì ẩn đi
                 if (soLuongMoi < soLuongHienTai) {
                     JOptionPane.showMessageDialog(this,
                             "Số lượng nhập mới phải lớn hơn số lượng hiện tại (" + soLuongHienTai + ")!",
